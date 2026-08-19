@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACK LUCKY JET ALGORITHME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { --matrix-green: #00ff41; --matrix-dark: #020202; }
+        body { 
+            background: var(--matrix-dark); 
+            font-family: 'Fira Code', monospace; 
+            color: var(--matrix-green); 
+            overflow-x: hidden;
+        }
+        
+        .hacker-terminal { 
+            border: 2px solid var(--matrix-green); 
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.3), inset 0 0 20px rgba(0, 255, 65, 0.1);
+            background: rgba(0, 0, 0, 0.98); 
+        }
+        .text-neon { text-shadow: 0 0 10px var(--matrix-green), 0 0 20px rgba(0, 255, 65, 0.8); }
+        .text-neon-cyan { text-shadow: 0 0 10px #00ffff, 0 0 20px rgba(0, 255, 255, 0.8); }
+        .promo-gradient { background: linear-gradient(90deg, #00ff41, #00ffff, #ff00ff); -webkit-background-clip: text; color: transparent; }
+        
+        .btn-hacker { 
+            border: 2px solid var(--matrix-green); 
+            background: rgba(0, 255, 65, 0.05);
+            transition: all 0.2s ease-in-out; 
+            text-transform: uppercase; 
+            letter-spacing: 0.15em;
+            font-weight: 700;
+        }
+        .btn-hacker:hover:not(:disabled) { 
+            background: var(--matrix-green); 
+            color: #000; 
+            box-shadow: 0 0 30px var(--matrix-green);
+        }
+        .btn-hacker:disabled { opacity: 0.15; cursor: wait; border-color: rgba(0,255,65,0.2); }
+        
+        .btn-register {
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            transition: all 0.2s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            display: block;
+            text-align: center;
+        }
+        .btn-register:hover {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+        }
+
+        .input-hacker { 
+            background: rgba(5, 5, 5, 0.95); 
+            border: 2px solid rgba(0, 255, 65, 0.4); 
+            color: #fff; 
+            text-align: center; 
+            font-weight: 700; 
+            outline: none; 
+        }
+        .input-hacker:focus { border-color: var(--matrix-green); box-shadow: 0 0 15px rgba(0, 255, 65, 0.5); }
+        
+        .cyber-grid {
+            position: fixed; inset: 0;
+            background-image: linear-gradient(rgba(0, 255, 65, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 65, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none; z-index: 1;
+        }
+        .scanline { 
+            position: fixed; inset: 0; 
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none; z-index: 999; 
+        }
+        
+        #ad-layer { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .hidden-state { display: none !important; }
+        .glitch-border { animation: blink 2s infinite alternate; }
+        @keyframes blink { 0% { border-color: rgba(0, 255, 65, 0.4); } 100% { border-color: rgba(0, 255, 65, 1); } }
+
+        /* Bouton de retour au Hub */
+        .back-to-hub-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(0, 255, 65, 0.4);
+            border-radius: 12px;
+            color: #00ff41;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transition: all 0.25s ease;
+        }
+        .back-to-hub-btn:hover {
+            background: rgba(0, 255, 65, 0.15);
+            border-color: #00ff41;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 255, 65, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative">
+    
+    <!-- Bouton Retour au Hub -->
+    <a href="/hub" class="back-to-hub-btn">
+        <i class="fa-solid fa-arrow-left"></i> Retour au Hub
+    </a>
+
+    <div class="cyber-grid"></div>
+    <div class="scanline"></div>
+
+    <div id="ad-layer">
+        <div class="w-full max-w-4xl hacker-terminal p-6 sm:p-8 rounded-xl border-2 grid grid-cols-1 md:grid-cols-2 gap-6 items-center glitch-border my-auto">
+            
+            <div class="flex flex-col justify-center items-center space-y-4 h-full border-b md:border-b-0 md:border-r border-[#00ff4133] pb-6 md:pb-0 md:pr-6">
+                <div class="text-[10px] tracking-widest text-red-500 font-bold animate-pulse text-center">[!] WARNING: UNCRYPTED CONNECTION</div>
+                
+                <div class="w-full bg-black border-2 border-[#00ff4133] rounded-lg p-2 flex items-center justify-center overflow-hidden shadow-inner">
+                    <img src="{{ url_for('static', filename='audre.jpg') }}" alt="Audre Banner" class="w-full h-auto max-h-[320px] object-cover rounded shadow-md block mx-auto">
+                </div>
+
+                <div class="w-full p-2.5 border border-dashed border-[#00ff4177] bg-[#00ff410d] rounded text-center">
+                    <span class="text-[9px] text-zinc-400 block tracking-widest mb-0.5">SYSTEM PROMO OVERRIDE</span>
+                    <span class="text-xl font-black promo-gradient tracking-widest">GODWIN5</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-center space-y-5">
+                <div class="text-center md:text-left">
+                    <h2 class="text-xl font-black text-white text-neon uppercase tracking-wider">LUCKY JET GATEWAY</h2>
+                    <p class="text-[11px] text-zinc-400 mt-1">Authentification requise pour déchiffrer le noyau algorithmique.</p>
+                </div>
+
+                <a href="https://one-vv0931.com/?open=register&p=ag6x" target="_blank" class="w-full py-3.5 btn-register text-xs rounded shadow-lg">
+                    Créer un compte authentique 1win
+                </a>
+
+                <div class="space-y-1.5 text-left">
+                    <label class="text-[10px] tracking-wider text-zinc-400 uppercase block">Clé de sécurité obligatoire :</label>
+                    <input type="text" id="security-key-input" class="w-full p-3 input-hacker rounded text-sm uppercase tracking-widest border-red-500/40" placeholder="CODE D'ACCÈS">
+                </div>
+                
+                <button id="ad-trigger" disabled class="w-full py-3.5 btn-hacker text-xs text-white">BYPASSING SYSTEM... (10s)</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="app-matrix" class="w-full max-w-2xl hacker-terminal rounded overflow-hidden relative hidden-state z-10">
+        <div class="bg-[#00ff4115] px-4 py-2 border-b-2 border-[#00ff4155] flex justify-between items-center text-[10px] tracking-widest font-bold">
+            <span class="animate-pulse">● OVERLOAD_RUNNING</span>
+            <span>SYS_TIME_SYNC: <span id="live-clock" class="text-white">--:--:--</span></span>
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-6">
+            <div class="text-center border-b-2 border-dashed border-[#00ff4133] pb-5">
+                <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-white text-neon uppercase">
+                    HACK LUCKY JET ALGORITHME
+                </h1>
+                <div class="text-[9px] opacity-70 mt-1 tracking-[0.25em] text-[#00ff41]">PACKET INJECTOR & MATHEMATICAL EXPLOIT</div>
+            </div>
+
+            <div id="setup-zone" class="space-y-4">
+                <p class="text-center text-[11px] uppercase tracking-widest text-zinc-300">
+                    Saisissez les 5 derniers multiplicateurs réels :
+                </p>
+                <div class="grid grid-cols-5 gap-1 sm:gap-2">
+                    <input type="number" step="0.01" min="1" class="input-hacker p-2 text-sm rounded last-odds" placeholder="1.00">
+                    <input type="number" step="0.01" min="1" class="input-hacker p-2 text-sm rounded last-odds" placeholder="1.00">
+                    <input type="number" step="0.01" min="1" class="input-hacker p-2 text-sm rounded last-odds" placeholder="1.00">
+                    <input type="number" step="0.01" min="1" class="input-hacker p-2 text-sm rounded last-odds" placeholder="1.00">
+                    <input type="number" step="0.01" min="1" class="input-hacker p-2 text-sm rounded last-odds" placeholder="1.00">
+                </div>
+                <button onclick="breachSystem()" class="w-full py-4 btn-hacker text-sm text-white">
+                    INJECTER LES COMPOSANTS DE BASE
+                </button>
+            </div>
+
+            <div id="live-zone" class="hidden-state space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2 border-2 border-[#00ff4166] p-5 bg-black/80 text-center rounded">
+                        <span class="text-[9px] text-[#00ff41] tracking-widest block opacity-60 uppercase mb-1">[ SIGNAL EXTRAIT ]</span>
+                        <div id="odds-display" class="text-5xl sm:text-6xl font-black tracking-tight text-white text-neon mb-2">--x</div>
+                        <div class="text-[11px] font-bold text-cyan-400 font-mono tracking-widest border-t border-[#00ff4122] pt-1 inline-block">
+                            HEURE DU SIGNAL : <span id="prediction-time" class="text-white text-neon-cyan">--:--:--</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-1 gap-2">
+                        <div class="border-2 border-[#00ff4133] p-2 text-center bg-black/60 rounded flex flex-col justify-center">
+                            <span class="block text-[8px] text-zinc-400 uppercase tracking-widest">CONFIANCE</span>
+                            <span id="confidence-display" class="font-bold text-md text-white">--%</span>
+                        </div>
+                        <div class="border-2 border-[#00ff4133] p-2 text-center bg-black/60 rounded flex flex-col justify-center">
+                            <span class="block text-[8px] text-zinc-400 uppercase tracking-widest">PROTOC.</span>
+                            <span id="status-label" class="text-amber-500 text-[10px] font-bold tracking-widest animate-pulse">STANDBY</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="log-screen" class="h-24 bg-black p-2 text-[9px] border-2 border-[#00ff4133] overflow-y-auto opacity-80 font-mono space-y-1 rounded text-[#00ff41]">
+                    <p class="text-white/40">> CONSOLE: En attente de la brèche d'initialisation...</p>
+                </div>
+
+                <button id="action-btn" onclick="executeHackingLoop()" class="w-full py-4 text-sm btn-hacker text-white">
+                    INTERCEPTER PROCHAIN PAQUET DATA
+                </button>
+            </div>
+
+            <div class="border-2 border-[#00ff4144] p-4 bg-black/40 rounded">
+                <span class="text-[10px] text-zinc-400 font-bold block uppercase tracking-widest mb-3">📂 COMPILATION DES SIGNAUX CAPTURÉS :</span>
+                <div id="history-area" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cooldownActive = false;
+        let coreInputs = [];
+        let validAccessCode = "";
+
+        window.onload = () => {
+            let ticker = 10;
+            const trigger = document.getElementById('ad-trigger');
+            const countdown = setInterval(() => {
+                ticker--;
+                trigger.innerText = `BYPASSING SECURITY SYSTEM... (${ticker}s)`;
+                if(ticker <= 0) {
+                    clearInterval(countdown);
+                    trigger.disabled = false;
+                    trigger.innerText = "S'INJECTER DANS LE NOYAU REEL";
+                    trigger.onclick = () => {
+                        const enteredCode = document.getElementById('security-key-input').value.trim().toUpperCase();
+                        
+                        if (enteredCode !== "SDYAHV2517") {
+                            alert("ACCÈS REFUSÉ : Clé de décryptage invalide.");
+                            return;
+                        }
+
+                        validAccessCode = enteredCode;
+                        document.getElementById('ad-layer').remove();
+                        document.getElementById('app-matrix').classList.remove('hidden-state');
+                    }
+                }
+            }, 1000);
+        };
+
+        setInterval(() => {
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('fr-FR');
+        }, 1000);
+
+        function pushLog(text, colorClass = "text-[#00ff41]") {
+            const screen = document.getElementById('log-screen');
+            const p = document.createElement('p');
+            p.innerText = `>> ${text}`;
+            p.className = colorClass;
+            screen.appendChild(p);
+            screen.scrollTop = screen.scrollHeight;
+        }
+
+        function breachSystem() {
+            const rawInputs = document.querySelectorAll('.last-odds');
+            coreInputs = Array.from(rawInputs).map(el => el.value.trim());
+
+            if(coreInputs.some(v => v === "")) {
+                alert("CRITICAL ERROR: Saisie incomplète.");
+                return;
+            }
+
+            document.getElementById('setup-zone').remove();
+            document.getElementById('live-zone').classList.remove('hidden-state');
+            pushLog("ROOT EXPLOIT GRANTED. Algorithme ancré.", "text-cyan-400 font-bold");
+            
+            executeHackingLoop();
+        }
+
+        async function executeHackingLoop() {
+            if (cooldownActive) return;
+
+            const btn = document.getElementById('action-btn');
+            const status = document.getElementById('status-label');
+
+            btn.disabled = true;
+            btn.innerText = "EXTRACTING SEED FROM SERVER...";
+            status.innerText = "DECRYPTING";
+            status.className = "text-amber-500 text-[10px] font-bold tracking-widest animate-pulse";
+            
+            pushLog("Interception des signatures numériques...");
+
+            try {
+                const req = await fetch('/api/predict-lucky', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        odds: coreInputs,
+                        access_code: validAccessCode
+                    })
+                });
+                
+                if (!req.ok) {
+                    throw new Error("Unauthorized access packet intercepted.");
+                }
+                
+                const res = await req.json();
+
+                setTimeout(() => {
+                    animatePredictedOdds(res.predicted_odds);
+                    document.getElementById('confidence-display').innerText = res.confidence;
+                    document.getElementById('prediction-time').innerText = res.timestamp;
+                    
+                    status.innerText = "SUCCESS";
+                    status.className = "text-emerald-400 text-[10px] font-bold tracking-widest animate-pulse";
+                    pushLog(`PAQUET CAPTURÉ : ${res.predicted_odds}x à ${res.timestamp}`, "text-cyan-400");
+                    
+                    const historyArea = document.getElementById('history-area');
+                    const cell = document.createElement('div');
+                    cell.className = "p-2 bg-black border border-[#00ff4144] rounded flex flex-col items-center justify-center text-center";
+                    cell.innerHTML = `
+                        <span class="text-white font-black text-sm text-neon">${res.predicted_odds}x</span>
+                        <span class="text-[9px] text-cyan-400 font-mono tracking-tighter mt-0.5">[ ${res.timestamp} ]</span>
+                    `;
+                    historyArea.prepend(cell);
+
+                    startSystemLockout(20);
+                }, 1200);
+
+            } catch (e) {
+                pushLog("CRITICAL SECURITY ERROR: ACCESS FORBIDDEN.", "text-red-500 font-bold");
+                status.innerText = "DENIED";
+                status.className = "text-red-500 text-[10px] font-bold tracking-widest";
+                startSystemLockout(5);
+            }
+        }
+
+        function animatePredictedOdds(finalVal) {
+            let start = 1.00;
+            const acceleration = (finalVal - 1.0) / 40;
+            const run = setInterval(() => {
+                start += acceleration;
+                if(start >= finalVal) { start = finalVal; clearInterval(run); }
+                document.getElementById('odds-display').innerText = start.toFixed(2) + 'x';
+            }, 25);
+        }
+
+        function startSystemLockout(time) {
+            cooldownActive = true;
+            const btn = document.getElementById('action-btn');
+            let remain = time;
+
+            const loop = setInterval(() => {
+                remain--;
+                btn.innerText = `CHARGEMENT COMPOSANTS ALGO... (${remain}S)`;
+                if(remain <= 0) {
+                    clearInterval(loop);
+                    cooldownActive = false;
+                    btn.disabled = false;
+                    btn.innerText = "INTERCEPTER PROCHAIN PAQUET DATA";
+                    pushLog("Nouveau canal disponible.", "text-white/50");
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

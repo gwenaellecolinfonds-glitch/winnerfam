@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1WIN MINES VIP PREDICTOR v4.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { 
+            --1win-blue: #0b1120;
+            --1win-card: #171f30;
+            --cyber-cyan: #00ffff;
+            --gold-star: #ffb703;
+        }
+        body { 
+            background: var(--1win-blue); 
+            font-family: 'Fira Code', monospace; 
+            color: #fff; 
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        
+        .hacker-terminal { 
+            border: 2px solid var(--cyber-cyan); 
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+            background: rgba(11, 17, 32, 0.95); 
+        }
+        .text-neon-cyan { text-shadow: 0 0 10px var(--cyber-cyan), 0 0 20px rgba(0, 255, 255, 0.6); }
+        .promo-gradient { background: linear-gradient(90deg, #00ffff, #ff00ff); -webkit-background-clip: text; color: transparent; }
+        
+        .btn-hacker { 
+            border: 2px solid var(--cyber-cyan); 
+            background: rgba(0, 255, 255, 0.05);
+            transition: all 0.2s ease-in-out; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em;
+            font-weight: 700;
+        }
+        .btn-hacker:hover:not(:disabled) { 
+            background: var(--cyber-cyan); 
+            color: #000; 
+            box-shadow: 0 0 20px var(--cyber-cyan);
+        }
+        .btn-hacker:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-register {
+            border: 2px solid var(--cyber-cyan);
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--cyber-cyan);
+            transition: all 0.2s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            display: block;
+            text-align: center;
+        }
+        .btn-register:hover {
+            background: var(--cyber-cyan);
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+        }
+        
+        .mines-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        .win-cell {
+            aspect-ratio: 1;
+            background: #202b3e;
+            border-radius: 8px;
+            border-bottom: 4px solid #141c28;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .win-cell.radar-detected {
+            border: 2px solid var(--cyber-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+            animation: pulse-border 0.8s infinite alternate;
+        }
+
+        @keyframes pulse-border {
+            from { border-color: rgba(0, 255, 255, 0.4); transform: scale(1); }
+            to { border-color: rgba(0, 255, 255, 1); transform: scale(1.05); }
+        }
+        
+        .win-cell.revealed-star {
+            background: #202b3e; 
+            border: 2px solid var(--gold-star);
+            border-bottom: 4px solid #b38000;
+            box-shadow: 0 0 20px rgba(255, 183, 3, 0.6);
+            font-size: 1.8rem;
+        }
+
+        .star-animated {
+            display: inline-block;
+            animation: star-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes star-pop {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            60% { transform: scale(1.4) rotate(15deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        #ad-layer { position: fixed; inset: 0; background: var(--1win-blue); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .hidden-state { display: none !important; }
+
+        /* Bouton de retour au Hub */
+        .back-to-hub-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(11, 17, 32, 0.85);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            color: #00ffff;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transition: all 0.25s ease;
+        }
+        .back-to-hub-btn:hover {
+            background: rgba(0, 255, 255, 0.15);
+            border-color: #00ffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <!-- Bouton Retour au Hub -->
+    <a href="/hub" class="back-to-hub-btn">
+        <i class="fa-solid fa-arrow-left"></i> Retour au Hub
+    </a>
+
+    <div id="ad-layer">
+        <div class="w-full max-w-4xl hacker-terminal p-6 sm:p-8 rounded-xl border grid grid-cols-1 md:grid-cols-2 gap-6 items-center my-auto">
+            
+            <div class="flex flex-col justify-center items-center space-y-4 h-full border-b md:border-b-0 md:border-r border-cyan-500/20 pb-6 md:pb-0 md:pr-6">
+                <div class="text-[10px] tracking-widest text-cyan-400 font-bold animate-pulse text-center">[ SECURE ACCESS GATEWAY ]</div>
+                
+                <div class="w-full bg-[#0d1321] border border-cyan-500/40 rounded-xl p-2 flex items-center justify-center overflow-hidden shadow-lg shadow-cyan-500/10">
+                    <img src="{{ url_for('static', filename='mineim.jpg') }}" alt="Mines Banner" class="w-full h-auto max-h-[260px] object-cover rounded-lg shadow-md block mx-auto">
+                </div>
+
+                <div class="w-full p-2.5 border-2 border-dashed border-cyan-500/50 bg-cyan-500/5 rounded-lg text-center">
+                    <span class="text-[9px] text-zinc-400 block tracking-widest mb-0.5">SYSTEM PROMO OVERRIDE</span>
+                    <span class="text-xl font-black promo-gradient tracking-widest">GODWIN5</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-center space-y-5">
+                <div class="text-center md:text-left">
+                    <h2 class="text-xl font-black text-white text-neon-cyan uppercase tracking-wider">MINES VIP GATEWAY</h2>
+                    <p class="text-[11px] text-zinc-400 mt-1">Passerelle de décryptage sécurisée de la matrice.</p>
+                </div>
+
+                <a href="https://one-vv0931.com/?open=register&p=ag6x" target="_blank" class="w-full py-3.5 btn-register text-xs rounded-lg shadow-lg">
+                    Créer un compte authentique 1win
+                </a>
+
+                <div class="space-y-1.5 text-left">
+                    <label class="text-[10px] tracking-wider text-zinc-400 uppercase block">Clé de sécurité obligatoire :</label>
+                    <input type="text" id="security-key-input" class="w-full p-3 bg-black border border-cyan-500/30 rounded-lg text-sm text-center font-bold uppercase tracking-widest text-white outline-none focus:border-cyan-400" placeholder="ENTREZ LE CODE D'ACCÈS">
+                </div>
+                
+                <button id="ad-trigger" disabled class="w-full py-3.5 btn-hacker text-xs text-white rounded-lg">INITIALIZING BYPASS... (10s)</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="app-matrix" class="w-full max-w-md hacker-terminal rounded-2xl overflow-hidden relative hidden-state z-10">
+        <div class="bg-cyan-500/10 px-4 py-2 border-b border-cyan-500/30 flex justify-between items-center text-[10px] tracking-widest font-bold">
+            <span class="animate-pulse text-cyan-400">● LIVE_PATTERN_DECRYPTOR_V4</span>
+            <span>CLOCK: <span id="live-clock" class="text-white">--:--:--</span></span>
+        </div>
+
+        <div class="p-5 space-y-6">
+            <div class="text-center border-b border-dashed border-zinc-800 pb-5">
+                <h1 class="text-2xl font-black tracking-wider text-white text-neon-cyan uppercase">
+                    MINES VIP PREDICTOR
+                </h1>
+                <div class="text-[9px] opacity-70 mt-1 tracking-widest text-cyan-400">MANUAL STEP-BY-STEP CONTROL</div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-[#172237] border border-zinc-800 rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold text-zinc-300 uppercase tracking-wider">Configuration :</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] text-zinc-400 uppercase">Pièges :</span>
+                            <select id="mines-count-selector" class="bg-[#202b3e] border border-cyan-500/50 text-white font-bold p-1 px-3 text-sm rounded-lg outline-none cursor-pointer">
+                                <option value="1">1 Piège</option>
+                                <option value="3" selected>3 Pièges</option>
+                                <option value="5">5 Pièges</option>
+                                <option value="7">7 Pièges</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mines-grid max-w-[280px] mx-auto my-4" id="mines-interactive-grid"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-center text-xs">
+                    <div class="bg-[#131b2e] border border-zinc-800 p-2.5 rounded-lg">
+                        <span class="block text-[8px] text-zinc-500 uppercase tracking-widest mb-1">PROBABILITÉ ALGO</span>
+                        <span id="confidence-display" class="font-bold text-cyan-400 text-sm">--%</span>
+                    </div>
+                    <div class="bg-[#131b2e] border border-zinc-800 p-2.5 rounded-lg">
+                        <span class="block text-[8px] text-zinc-500 uppercase tracking-widest mb-1">SIGNAL GMT</span>
+                        <span id="prediction-time" class="text-white font-bold text-sm">--:--:--</span>
+                    </div>
+                </div>
+
+                <div id="log-screen" class="h-16 bg-black/60 p-2 text-[9px] border border-zinc-800 rounded-lg overflow-y-auto font-mono text-zinc-400">
+                    <p class="text-cyan-400">> Terminal prêt. Cliquez sur "SCANNER LA MATRICE".</p>
+                </div>
+
+                <button id="action-btn" onclick="handleMainButtonClick()" class="w-full py-4 text-sm btn-hacker text-white rounded-xl">
+                    SCANNER LA MATRICE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let validAccessCode = ""; 
+        let currentPredictedStars = []; 
+        let currentStarStep = 0; 
+        let gameState = "IDLE"; 
+
+        window.onload = () => {
+            renderEmptyGrid(); 
+            let ticker = 10;
+            const trigger = document.getElementById('ad-trigger');
+            const countdown = setInterval(() => {
+                ticker--;
+                trigger.innerText = `INITIALIZING SECURITY BYPASS... (${ticker}s)`;
+                if(ticker <= 0) {
+                    clearInterval(countdown);
+                    trigger.disabled = false;
+                    trigger.innerText = "ACCÉDER À LA MATRICE DE JEU";
+                    trigger.onclick = () => {
+                        const enteredCode = document.getElementById('security-key-input').value.trim().toUpperCase();
+                        
+                        if (enteredCode !== "WDYAHV2500") {
+                            alert("ACCÈS REFUSÉ : Clé de décryptage invalide.");
+                            return;
+                        }
+
+                        validAccessCode = enteredCode; 
+                        document.getElementById('ad-layer').remove();
+                        document.getElementById('app-matrix').classList.remove('hidden-state');
+                    }
+                }
+            }, 1000);
+        };
+
+        setInterval(() => {
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('fr-FR');
+        }, 1000);
+
+        function renderEmptyGrid() {
+            const gridContainer = document.getElementById('mines-interactive-grid');
+            gridContainer.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'win-cell';
+                cell.dataset.index = i;
+                cell.addEventListener('click', () => handleCellClick(cell));
+                gridContainer.appendChild(cell);
+            }
+        }
+
+        function handleMainButtonClick() {
+            const btn = document.getElementById('action-btn');
+
+            if (gameState === "IDLE") {
+                executePrediction();
+            } 
+            else if (gameState === "STEP_WAITING_BUTTON") {
+                showNextStarOnRadar();
+            }
+        }
+
+        function showNextStarOnRadar() {
+            if (currentStarStep < currentPredictedStars.length) {
+                const activeIndex = currentPredictedStars[currentStarStep];
+                const cell = document.querySelector(`.win-cell[data-index="${activeIndex}"]`);
+                
+                if (cell) {
+                    cell.classList.add('radar-detected');
+                }
+
+                gameState = "STEP_WAITING_GRID";
+                const btn = document.getElementById('action-btn');
+                btn.disabled = true;
+                btn.innerText = `CLIQUEZ L'ÉTOILE SUR LA GRILLE (${currentStarStep + 1}/${currentPredictedStars.length})`;
+                btn.className = "w-full py-4 text-sm btn-hacker text-cyan-400 rounded-xl opacity-75";
+
+                pushLog(`Zone radar s'allume pour l'étoile ${currentStarStep + 1}. Cliquez dessus sur la grille.`);
+            }
+        }
+
+        function handleCellClick(cell) {
+            if (gameState !== "STEP_WAITING_GRID") return;
+
+            const expectedIndex = currentPredictedStars[currentStarStep];
+            const clickedIndex = parseInt(cell.dataset.index);
+
+            if (clickedIndex === expectedIndex && cell.classList.contains('radar-detected')) {
+                cell.classList.remove('radar-detected');
+                cell.classList.add('revealed-star');
+                cell.innerHTML = '<span class="star-animated">⭐</span>';
+                
+                currentStarStep++; 
+                pushLog(`Étoile ${currentStarStep}/${currentPredictedStars.length} révélée ⭐`, true);
+
+                const btn = document.getElementById('action-btn');
+
+                if (currentStarStep < currentPredictedStars.length) {
+                    gameState = "STEP_WAITING_BUTTON";
+                    btn.disabled = false;
+                    btn.innerText = "AFFICHER LA PROCHAINE ÉTOILE";
+                    btn.className = "w-full py-4 text-sm btn-hacker text-white rounded-xl";
+                } else {
+                    gameState = "IDLE";
+                    btn.disabled = false;
+                    btn.innerText = "SCANNER LA MATRICE";
+                    btn.className = "w-full py-4 text-sm btn-hacker text-white rounded-xl";
+                    
+                    pushLog(`Prévision terminée ! Prêt pour un nouveau scan.`, true);
+                    currentPredictedStars = [];
+                }
+            }
+        }
+
+        function pushLog(text, isAlert = false) {
+            const screen = document.getElementById('log-screen');
+            const p = document.createElement('p');
+            p.innerText = `>> ${text}`;
+            if (isAlert) p.className = "text-cyan-300 font-bold";
+            screen.appendChild(p);
+            screen.scrollTop = screen.scrollHeight;
+        }
+
+        async function executePrediction() {
+            const btn = document.getElementById('action-btn');
+            const selectedMines = document.getElementById('mines-count-selector').value;
+
+            gameState = "SCANNING";
+            btn.disabled = true;
+            btn.innerText = "SCANNING MATRIX...";
+            btn.className = "w-full py-4 text-sm btn-hacker text-cyan-400 rounded-xl animate-pulse";
+            
+            renderEmptyGrid();
+            pushLog(`Lancement du scan (${selectedMines} piège(s))...`);
+            currentStarStep = 0; 
+            currentPredictedStars = [];
+
+            try {
+                const req = await fetch('/api/predict-mines', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        mines_count: selectedMines,
+                        access_code: validAccessCode
+                    })
+                });
+                
+                if (!req.ok) throw new Error("Unauthorized.");
+                
+                const res = await req.json();
+                currentPredictedStars = res.predicted_stars; 
+
+                setTimeout(() => {
+                    document.getElementById('confidence-display').innerText = res.confidence;
+                    document.getElementById('prediction-time').innerText = res.timestamp;
+                    
+                    gameState = "STEP_WAITING_BUTTON";
+                    btn.disabled = false;
+                    btn.innerText = "AFFICHER LA PROCHAINE ÉTOILE";
+                    btn.className = "w-full py-4 text-sm btn-hacker text-white rounded-xl";
+                    
+                    pushLog(`${currentPredictedStars.length} étoiles détectées. Appuyez sur le bouton pour afficher la 1ère étoile.`, true);
+                }, 1000);
+
+            } catch (e) {
+                pushLog("ERREUR : Problème de connexion avec le serveur.", true);
+                gameState = "IDLE";
+                btn.disabled = false;
+                btn.innerText = "SCANNER LA MATRICE";
+                btn.className = "w-full py-4 text-sm btn-hacker text-white rounded-xl";
+            }
+        }
+    </script>
+</body>
+</html>
