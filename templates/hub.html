@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINNER FAMILY - HUB PROFESSIONNEL</title>
+    <title>WINNER FAMILY - CASINO HUB</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
             --bg-color: #030712;
-            --card-bg: rgba(17, 24, 39, 0.75);
-            --border-glow: rgba(0, 255, 255, 0.2);
+            --card-bg: rgba(17, 24, 39, 0.85);
+            --border-glow: rgba(0, 255, 255, 0.25);
         }
 
         body {
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 255, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 10% 90%, rgba(0, 255, 65, 0.05) 0%, transparent 40%);
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 255, 255, 0.08) 0%, transparent 50%);
             font-family: 'Fira Code', monospace;
             color: #fff;
             min-height: 100vh;
@@ -26,247 +24,117 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            overflow-x: hidden;
             margin: 0;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.02); }
-        }
-
-        .animate-hub {
-            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .hub-container {
             background: var(--card-bg);
             border: 1px solid var(--border-glow);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         }
 
-        .app-card {
-            position: relative;
-            background: rgba(15, 23, 42, 0.6);
+        .btn-register {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            display: block;
+            text-decoration: none;
+        }
+        .btn-register:hover {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+        }
+
+        .game-card {
+            background: rgba(15, 23, 42, 0.75);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
-            padding: 22px;
+            padding: 14px;
             text-decoration: none;
             color: #fff;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 18px;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow: hidden;
+            text-align: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
         }
 
-        .app-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--card-accent);
-            opacity: 0.7;
-            transition: width 0.3s ease;
+        .game-card:hover {
+            transform: translateY(-4px);
+            border-color: #00ffff;
+            box-shadow: 0 12px 30px -5px rgba(0, 255, 255, 0.25);
+            background: rgba(20, 30, 50, 0.95);
         }
 
-        .app-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            border-color: var(--card-accent);
-            box-shadow: 0 15px 30px -10px var(--shadow-color);
-            background: rgba(20, 30, 50, 0.8);
+        .img-container {
+            width: 100%; height: 110px; background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 4px;
         }
 
-        .app-card:hover::before {
-            width: 8px;
-            opacity: 1;
-        }
-
-        .card-lucky { --card-accent: #00ff41; --shadow-color: rgba(0, 255, 65, 0.25); }
-        .card-mines { --card-accent: #00ffff; --shadow-color: rgba(0, 255, 255, 0.25); }
-        .card-trading { --card-accent: #ffb703; --shadow-color: rgba(255, 183, 3, 0.25); }
-
-        .icon-box {
-            width: 52px;
-            height: 52px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            flex-shrink: 0;
-            transition: transform 0.3s ease;
-        }
-
-        .app-card:hover .icon-box {
-            transform: scale(1.1) rotate(-5deg);
-        }
-
-        .card-lucky .icon-box { color: #00ff41; }
-        .card-mines .icon-box { color: #00ffff; }
-        .card-trading .icon-box { color: #ffb703; }
-
-        .arrow-icon {
-            margin-left: auto;
-            color: rgba(255, 255, 255, 0.3);
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        .app-card:hover .arrow-icon {
-            transform: translateX(6px);
-            color: #fff;
-        }
-
-        .live-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 14px;
-            background: rgba(0, 255, 135, 0.08);
-            border: 1px solid rgba(0, 255, 135, 0.25);
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #00ff87;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .pulse-dot {
-            width: 7px;
-            height: 7px;
-            background-color: #00ff87;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #00ff87;
-            animation: pulseGlow 1.8s infinite;
-        }
-
-        #loader-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(3, 7, 18, 0.95);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-
-        #loader-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .spinner-ring {
-            width: 80px;
-            height: 80px;
-            border: 3px solid rgba(0, 255, 255, 0.1);
-            border-top: 3px solid #00ffff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px auto;
-            box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .godwin-text {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 4px;
-            background: linear-gradient(90deg, #00ff41, #00ffff, #ff00ff);
-            -webkit-background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-        }
+        .game-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
     </style>
 </head>
 <body>
 
-    <div class="w-full max-w-lg hub-container p-8 rounded-3xl animate-hub space-y-7">
+    <div class="w-full max-w-lg hub-container p-6 sm:p-8 rounded-3xl space-y-6">
         <div class="text-center space-y-3">
-            <div class="inline-block">
-                <div class="live-badge">
-                    <span class="pulse-dot"></span>
-                    <span>Systèmes Opérationnels</span>
-                </div>
-            </div>
-            <h1 class="text-3xl sm:text-4xl font-black text-white tracking-wider uppercase">
-                WINNER FAMILY <span class="text-cyan-400">HUB</span>
+            <h1 class="text-2xl sm:text-3xl font-black tracking-wider uppercase">
+                WINNER FAMILY <span class="text-cyan-400">CASINO</span>
             </h1>
-            <p class="text-xs text-zinc-400 tracking-wide">
-                Sélectionnez votre terminal d'analyse prédictive et algorithmique.
-            </p>
+            <!-- Bouton d'inscription ajouté -->
+            <a href="https://one-vv0011.com/?open=register&p=9v9g" target="_blank" class="btn-register">
+                <i class="fa-solid fa-user-plus mr-2"></i> CLIQUEZ ICI POUR VOUS INSCRIRE
+            </a>
+            <p class="text-[10px] text-zinc-400">Sélectionnez votre jeu pour lancer le prédicteur</p>
         </div>
         
-        <div class="space-y-3.5">
-            <a href="/lucky" class="app-card card-lucky" onclick="triggerLoader(event, '/lucky')">
-                <div class="icon-box"><i class="fa-solid fa-rocket"></i></div>
-                <div>
-                    <h2 class="font-bold text-base text-white">HACK LUCKY JET</h2>
-                    <p class="text-[11px] text-zinc-400 mt-0.5">Algorithme de calcul des multiplicateurs de vol</p>
-                </div>
-                <i class="fa-solid fa-chevron-right arrow-icon"></i>
-            </a>
+        <div class="grid grid-cols-2 gap-3.5">
+            <!-- Crash -->
+            <div class="game-card" onclick="goToGateway('crash')">
+                <div class="img-container"><img src="{{ url_for('static', filename='crash.png') }}" alt="Crash" class="game-img"></div>
+                <div><h2 class="font-bold text-xs">Crash</h2><p class="text-[9px] text-zinc-400">1win Games</p></div>
+            </div>
 
-            <a href="/mines" class="app-card card-mines" onclick="triggerLoader(event, '/mines')">
-                <div class="icon-box"><i class="fa-solid fa-bomb"></i></div>
-                <div>
-                    <h2 class="font-bold text-base text-white">MINES VIP PREDICTOR</h2>
-                    <p class="text-[11px] text-zinc-400 mt-0.5">Système de décryptage des grilles de pièges</p>
-                </div>
-                <i class="fa-solid fa-chevron-right arrow-icon"></i>
-            </a>
+            <!-- Lucky Jet -->
+            <div class="game-card" onclick="goToGateway('lucky')">
+                <div class="img-container"><img src="{{ url_for('static', filename='lucky.png') }}" alt="Lucky Jet" class="game-img"></div>
+                <div><h2 class="font-bold text-xs">Lucky Jet</h2><p class="text-[9px] text-zinc-400">1win Games</p></div>
+            </div>
 
-            <a href="/trading" class="app-card card-trading" onclick="triggerLoader(event, '/trading')">
-                <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
-                <div>
-                    <h2 class="font-bold text-base text-white">TRADING VIP ENGINE</h2>
-                    <p class="text-[11px] text-zinc-400 mt-0.5">Analyseur institutionnel de signaux en temps réel</p>
-                </div>
-                <i class="fa-solid fa-chevron-right arrow-icon"></i>
-            </a>
+            <!-- Mines Classic -->
+            <div class="game-card" onclick="goToGateway('mines')">
+                <div class="img-container"><img src="{{ url_for('static', filename='mines.png') }}" alt="Mines Classic" class="game-img"></div>
+                <div><h2 class="font-bold text-xs">Mines Classic</h2><p class="text-[9px] text-zinc-400">1win Games</p></div>
+            </div>
+
+            <!-- Aviator -->
+            <div class="game-card" onclick="goToGateway('aviator')">
+                <div class="img-container"><img src="{{ url_for('static', filename='aviator.png') }}" alt="Aviator" class="game-img"></div>
+                <div><h2 class="font-bold text-xs">Aviator</h2><p class="text-[9px] text-zinc-400">Spribe</p></div>
+            </div>
         </div>
 
-        <div class="text-center border-t border-zinc-800/80 pt-4">
-            <span class="text-[10px] text-zinc-500 tracking-widest uppercase">
-                © 2026 WINNER FAMILY • SÉCURISÉ & CHIFFRÉ
-            </span>
-        </div>
-    </div>
-
-    <div id="loader-overlay">
-        <div class="loader-content text-center">
-            <div class="spinner-ring"></div>
-            <div class="godwin-text animate-pulse">GODWIN5</div>
-            <p class="text-[10px] text-cyan-400 tracking-widest uppercase mt-2">Chargement du protocole sécurisé...</p>
+        <div class="text-center border-t border-zinc-800 pt-3">
+            <span class="text-[9px] text-zinc-500 tracking-widest uppercase">© 2026 WINNER FAMILY • CASINO VIP</span>
         </div>
     </div>
 
     <script>
-        function triggerLoader(event, targetUrl) {
-            event.preventDefault();
-            const overlay = document.getElementById('loader-overlay');
-            overlay.classList.add('active');
-            setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 1200);
+        function goToGateway(gameKey) {
+            window.location.href = `/game/${gameKey}`;
         }
     </script>
 </body>

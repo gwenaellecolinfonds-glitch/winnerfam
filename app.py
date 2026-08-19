@@ -5,133 +5,104 @@ from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template, jsonify, request
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-app = Flask(__name__, static_folder='static', static_url_path='/static')
+app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-# Clés de sécurité respectives
-ACCESS_CODE_LUCKY = "SDYAHV2517"
-ACCESS_CODE_MINES = "WDYAHV2500"
-ACCESS_CODE_TRADING = "TRAG679DGA"
+# Nouveaux codes de sécurité distincts pour chaque jeu
+CODES = {
+    "crash": "CRASH-X99-VIP-26",
+    "lucky": "LUCKY-JET-V26-PRO",
+    "mines": "MINES-MATRIX-26-X",
+    "aviator": "AVIA-SKY-26-VIP"
+}
 
-# Routes de navigation
+# --- Routes de navigation ---
 @app.route('/')
 @app.route('/hub')
 def hub_page():
     return render_template('hub.html')
 
+# --- Route passerelle intermédiaire (Gateway) ---
+@app.route('/game/<game_name>')
+def game_gateway(game_name):
+    games_info = {
+        'crash': {'title': 'Crash', 'provider': '1win Games', 'image': 'crash.png', 'target': '/crash'},
+        'lucky': {'title': 'Lucky Jet', 'provider': '1win Games', 'image': 'lucky.png', 'target': '/lucky'},
+        'mines': {'title': 'Mines Classic', 'provider': '1win Games', 'image': 'mines.png', 'target': '/mines'},
+        'aviator': {'title': 'Aviator', 'provider': 'Spribe', 'image': 'aviator.png', 'target': '/aviator'}
+    }
+    
+    info = games_info.get(game_name, games_info['aviator'])
+    return render_template('gateway.html', game=info)
+
+# --- Pages finales des jeux ---
+@app.route('/crash')
+def crash_page(): return render_template('crash.html')
+
 @app.route('/lucky')
-def lucky_page():
-    return render_template('lucky.html')
+def lucky_page(): return render_template('lucky.html')
 
 @app.route('/mines')
-def mines_page():
-    return render_template('mines.html')
+def mines_page(): return render_template('mines.html')
 
-@app.route('/trading')
-def trading_page():
-    return render_template('trading.html')
+@app.route('/aviator')
+def aviator_page(): return render_template('aviator.html')
 
-# API - Lucky Jet
+# --- API : Crash ---
+@app.route('/api/predict-crash', methods=['POST'])
+def predict_crash():
+    data = request.get_json() or {}
+    if data.get('access_code') != CODES["crash"]: 
+        return jsonify({"error": "Accès refusé"}), 403
+    return jsonify({
+        "multiplier": f"{round(random.uniform(1.01, 20.00), 2)}x", 
+        "confidence": "96%", 
+        "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S")
+    })
+
+# --- API : Lucky Jet ---
 @app.route('/api/predict-lucky', methods=['POST'])
 def predict_lucky():
     data = request.get_json() or {}
-    user_code = data.get('access_code', '')
-
-    if user_code != ACCESS_CODE_LUCKY:
-        return jsonify({"status": "error", "message": "ACCESS DENIED: INVALID SECURITY KEY"}), 403
-
-    current_timestamp = int(time.time())
-    time_window = current_timestamp // 20
-    random.seed(time_window)
-    
-    rand = random.random()
-    if rand < 0.70:
-        predicted_odds = round(random.uniform(1.85, 6.50), 2)
-    else:
-        predicted_odds = round(random.uniform(6.50, 32.40), 2)
-        
-    confidence = random.randint(89, 99)
-    time_plus_45s = datetime.now(timezone.utc) + timedelta(seconds=45)
-    current_time_ci = time_plus_45s.strftime("%H:%M:%S")
-    
+    if data.get('access_code') != CODES["lucky"]: 
+        return jsonify({"error": "Accès refusé"}), 403
     return jsonify({
-        "status": "success",
-        "predicted_odds": predicted_odds,
-        "confidence": f"{confidence}%",
-        "timestamp": current_time_ci
+        "predicted_odds": round(random.uniform(1.01, 20.00), 2), 
+        "confidence": "97%", 
+        "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S")
     })
 
-# API - Mines VIP
-@app.route('/api/predict-mines', methods=['POST'])
+# --- API : Mines (1, 3, 5, 7 pièges) ---
+@app.route('/api/predict', methods=['POST'])
 def predict_mines():
     data = request.get_json() or {}
-    user_code = data.get('access_code', '')
+    if data.get('access_code') != CODES["mines"]: 
+        return jsonify({"status": "error"}), 403
     
     try:
-        mines_count = int(data.get('mines_count', 3))
-        if mines_count not in [1, 3, 5, 7]:
-            mines_count = 3
+        mines = int(data.get('mines_count', 3))
+        if mines not in [1, 3, 5, 7]: mines = 3
     except ValueError:
-        mines_count = 3
+        mines = 3
 
-    if user_code != ACCESS_CODE_MINES:
-        return jsonify({"status": "error", "message": "ACCESS DENIED: INVALID SECURITY KEY"}), 403
-
-    current_timestamp = int(time.time())
-    random.seed(current_timestamp)
-    
-    if mines_count == 1:
-        stars_to_reveal = random.randint(5, 8)
-    elif mines_count == 3:
-        stars_to_reveal = random.randint(4, 6)
-    elif mines_count == 5:
-        stars_to_reveal = random.randint(3, 5)
-    elif mines_count == 7:
-        stars_to_reveal = random.randint(2, 4)
-    else:
-        stars_to_reveal = random.randint(3, 5)
-
-    all_cells = list(range(25))
-    safe_cells_count = 25 - mines_count
-    actual_stars_count = min(stars_to_reveal, safe_cells_count)
-    
-    predicted_stars = random.sample(all_cells, actual_stars_count)
-    confidence = random.randint(95, 99)
-    current_time_gmt = datetime.now(timezone.utc).strftime("%H:%M:%S")
-    
+    stars = {1: random.randint(5, 8), 3: random.randint(4, 6), 5: random.randint(3, 5), 7: random.randint(2, 4)}.get(mines, 4)
     return jsonify({
         "status": "success",
-        "predicted_stars": predicted_stars,
-        "confidence": f"{confidence}%",
-        "timestamp": current_time_gmt
+        "predicted_stars": random.sample(range(25), min(stars, 25 - mines)), 
+        "confidence": "98%", 
+        "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S")
     })
 
-# API - Trading VIP
-@app.route('/api/signal', methods=['POST'])
-def generate_signal():
+# --- API : Aviator ---
+@app.route('/api/predict-aviator', methods=['POST'])
+def predict_aviator():
     data = request.get_json() or {}
-    user_code = data.get('access_code', '').strip().upper()
-
-    if user_code != ACCESS_CODE_TRADING:
-        return jsonify({'error': 'Code d\'accès invalide'}), 401
-
-    asset = data.get('asset', 'EUR/USD (OTC)')
-    timeframe = data.get('timeframe', '30s')
-
-    time.sleep(random.uniform(0.6, 1.2))
-
-    direction = random.choice(['HAUT (CALL) 📈', 'BAS (PUT) 📉'])
-    confidence = f"{random.randint(88, 98)}%"
-    timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")
-
+    if data.get('access_code') != CODES["aviator"]: 
+        return jsonify({"error": "Accès refusé"}), 403
     return jsonify({
-        'asset': asset,
-        'timeframe': timeframe,
-        'direction': direction,
-        'confidence': confidence,
-        'timestamp': timestamp,
-        'status': 'success'
+        "multiplier": f"{round(random.uniform(1.01, 20.00), 2)}x", 
+        "confidence": "95%", 
+        "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S")
     })
 
 if __name__ == '__main__':

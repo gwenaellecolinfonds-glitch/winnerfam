@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game.title }} - Passerelle VIP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #030712;
+            --card-bg: rgba(17, 24, 39, 0.9);
+            --border-glow: rgba(0, 255, 255, 0.25);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 10% 90%, rgba(0, 255, 65, 0.05) 0%, transparent 40%);
+            font-family: 'Fira Code', monospace;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .gateway-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 24px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+
+        .back-link {
+            color: #9ca3af;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #fff; }
+
+        .game-banner-box {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-logo-container {
+            width: 170px;
+            height: 210px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 16px;
+            margin: 0 auto 14px auto;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-logo-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        /* Bouton Hacker L'Algorithme */
+        .btn-hack {
+            width: 100%;
+            background: linear-gradient(90deg, #00ff41, #00ffff);
+            color: #030712;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-hack:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+        }
+
+        /* Écran de chargement GODWIN5 */
+        #loader-overlay {
+            position: fixed; inset: 0;
+            background: rgba(3, 7, 18, 0.96);
+            backdrop-filter: blur(12px);
+            z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #loader-overlay.active { opacity: 1; visibility: visible; }
+        
+        .spinner-ring {
+            width: 75px; height: 75px;
+            border: 3px solid rgba(0, 255, 255, 0.1);
+            border-top: 3px solid #00ffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 18px auto;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .godwin-text {
+            font-size: 1.8rem; font-weight: 900; letter-spacing: 4px;
+            background: linear-gradient(90deg, #00ff41, #00ffff, #ff00ff);
+            -webkit-background-clip: text; color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gateway-container">
+        <!-- Navigation supérieure -->
+        <div class="top-nav">
+            <a href="/hub" class="back-link">
+                <i class="fa-solid fa-chevron-left"></i> Retour
+            </a>
+            <div class="flex gap-3 text-zinc-400">
+                <i class="fa-solid fa-arrow-up-right-from-square cursor-pointer hover:text-white"></i>
+                <i class="fa-regular fa-bookmark cursor-pointer hover:text-white"></i>
+            </div>
+        </div>
+
+        <!-- Bannière du jeu -->
+        <div class="game-banner-box">
+            <div class="game-logo-container">
+                <img src="{{ url_for('static', filename=game.image) }}" alt="{{ game.title }}" class="game-logo-img">
+            </div>
+            <h1 class="text-xl font-black text-white mt-3">{{ game.title }}</h1>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ game.provider }}</p>
+        </div>
+
+        <!-- Bouton Hacker L'Algorithme -->
+        <button onclick="launchHackerLoader('{{ game.target }}')" class="btn-hack">
+            <i class="fa-solid fa-terminal mr-2"></i> Hacker L'Algorithme
+        </button>
+    </div>
+
+    <!-- Écran de chargement GODWIN5 -->
+    <div id="loader-overlay">
+        <div class="text-center">
+            <div class="spinner-ring"></div>
+            <div class="godwin-text animate-pulse">GODWIN5</div>
+            <p class="text-[10px] text-cyan-400 tracking-widest uppercase mt-2">Injection de l'algorithme en cours...</p>
+        </div>
+    </div>
+
+    <script>
+        function launchHackerLoader(targetUrl) {
+            document.getElementById('loader-overlay').classList.add('active');
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 1300);
+        }
+    </script>
+</body>
+</html>
