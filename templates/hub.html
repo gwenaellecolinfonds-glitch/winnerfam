@@ -19,12 +19,14 @@
             background-image: radial-gradient(circle at 50% 0%, rgba(0, 255, 255, 0.08) 0%, transparent 50%);
             font-family: 'Fira Code', monospace;
             color: #fff;
-            min-height: 100vh;
+            min-height: 100dvh; /* Hauteur dynamique optimisée pour mobile */
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
             margin: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         .hub-container {
@@ -32,6 +34,9 @@
             border: 1px solid var(--border-glow);
             backdrop-filter: blur(16px);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
         }
 
         .btn-register {
@@ -79,29 +84,41 @@
         }
 
         .img-container {
-            width: 100%; height: 110px; background: rgba(0, 0, 0, 0.4);
-            border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 4px;
+            width: 100%; 
+            height: 100px; 
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            padding: 4px;
         }
 
-        .game-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+        .game-img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+            border-radius: 6px; 
+        }
     </style>
 </head>
 <body>
 
-    <div class="w-full max-w-lg hub-container p-6 sm:p-8 rounded-3xl space-y-6">
+    <div class="hub-container p-5 sm:p-8 rounded-3xl space-y-5">
         <div class="text-center space-y-3">
             <h1 class="text-2xl sm:text-3xl font-black tracking-wider uppercase">
                 WINNER FAMILY <span class="text-cyan-400">CASINO</span>
             </h1>
-            <!-- Bouton d'inscription ajouté -->
+            <!-- Bouton d'inscription -->
             <a href="https://one-vv0011.com/?open=register&p=9v9g" target="_blank" class="btn-register">
                 <i class="fa-solid fa-user-plus mr-2"></i> CLIQUEZ ICI POUR VOUS INSCRIRE
             </a>
             <p class="text-[10px] text-zinc-400">Sélectionnez votre jeu pour lancer le prédicteur</p>
         </div>
         
-        <div class="grid grid-cols-2 gap-3.5">
+        <div class="grid grid-cols-2 gap-3">
             <!-- Crash -->
             <div class="game-card" onclick="goToGateway('crash')">
                 <div class="img-container"><img src="{{ url_for('static', filename='crash.png') }}" alt="Crash" class="game-img"></div>

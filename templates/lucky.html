@@ -12,12 +12,14 @@
             background: #0d091e; 
             font-family: 'Fira Code', monospace; 
             color: #fff; 
-            overflow: hidden;
+            overflow-x: hidden;
             margin: 0;
-            height: 100vh;
+            min-height: 100dvh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 12px;
+            box-sizing: border-box;
         }
 
         .lucky-bg {
@@ -49,7 +51,7 @@
             position: relative;
             width: 100%;
             max-width: 900px;
-            height: 520px;
+            height: 480px;
             border-radius: 20px;
             background: linear-gradient(135deg, #181232 0%, #0d091e 100%);
             border: 2px solid rgba(168, 85, 247, 0.2);
@@ -58,12 +60,13 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 30px;
+            padding: 20px;
             overflow: hidden;
+            box-sizing: border-box;
         }
 
         .multiplier-giant {
-            font-size: 6.5rem;
+            font-size: clamp(3.5rem, 12vw, 6.5rem);
             font-weight: 900;
             color: #b886fb;
             text-shadow: 0 0 30px rgba(184, 134, 251, 0.5), 0 0 60px rgba(168, 85, 247, 0.3);
@@ -73,9 +76,9 @@
 
         .lucky-character {
             position: absolute;
-            left: 40px;
-            bottom: 40px;
-            width: 140px;
+            left: 6%;
+            bottom: 12%;
+            width: clamp(90px, 20vw, 140px);
             height: auto;
             z-index: 5;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
@@ -83,18 +86,18 @@
         }
 
         @keyframes realTakeOff {
-            0% { left: 40px; bottom: 40px; transform: scale(0.95) rotate(-12deg); }
-            40% { left: 260px; bottom: 150px; transform: scale(1.05) rotate(5deg); }
-            80% { left: 500px; bottom: 240px; transform: scale(1.1) rotate(12deg); }
-            100% { left: 630px; bottom: 270px; transform: scale(1.15) rotate(15deg); }
+            0% { left: 6%; bottom: 12%; transform: scale(0.95) rotate(-12deg); }
+            40% { left: 32% ; bottom: 32%; transform: scale(1.05) rotate(5deg); }
+            80% { left: 58%; bottom: 52%; transform: scale(1.1) rotate(12deg); }
+            100% { left: 70%; bottom: 60%; transform: scale(1.15) rotate(15deg); }
         }
         .taking-off {
             animation: realTakeOff 1.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
         }
 
         @keyframes flyAway {
-            0% { left: 630px; bottom: 270px; transform: scale(1.15) rotate(15deg); }
-            100% { left: 980px; bottom: 380px; transform: scale(1.25) rotate(25deg); opacity: 0; }
+            0% { left: 70%; bottom: 60%; transform: scale(1.15) rotate(15deg); }
+            100% { left: 105%; bottom: 85%; transform: scale(1.25) rotate(25deg); opacity: 0; }
         }
         .flying-away {
             animation: flyAway 1s ease-in forwards;
@@ -112,7 +115,7 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(168, 85, 247, 0.3);
             border-radius: 14px;
-            padding: 16px;
+            padding: 14px;
             z-index: 20;
         }
 
@@ -137,7 +140,7 @@
 
         #ad-layer {
             position: fixed; inset: 0; background: #080514; z-index: 2000;
-            display: flex; align-items: center; justify-content: center; padding: 20px;
+            display: flex; align-items: center; justify-content: center; padding: 16px;
         }
         .hidden-state { display: none !important; }
 
@@ -153,12 +156,12 @@
         }
 
         .back-to-hub-btn {
-            position: fixed; top: 20px; left: 20px; z-index: 9999;
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 14px; background: rgba(18, 13, 38, 0.85);
-            border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 12px;
+            position: fixed; top: 12px; left: 12px; z-index: 9999;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 10px; background: rgba(18, 13, 38, 0.85);
+            border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 10px;
             color: #d8b4fe; font-family: 'Fira Code', monospace;
-            font-size: 0.75rem; font-weight: 700; text-decoration: none;
+            font-size: 0.7rem; font-weight: 700; text-decoration: none;
             backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             transition: all 0.25s ease;
         }
@@ -171,16 +174,16 @@
 <body>
 
     <a href="/hub" class="back-to-hub-btn">
-        <i class="fa-solid fa-arrow-left"></i> Retour au Hub
+        <i class="fa-solid fa-arrow-left"></i> Hub
     </a>
 
     <!-- Écran de Sécurité Initial -->
     <div id="ad-layer">
-        <div class="w-full max-w-md bg-[#120d26] p-8 rounded-2xl border-2 border-purple-500/30 text-center space-y-6 shadow-2xl">
-            <div class="w-24 h-24 mx-auto bg-black/40 rounded-xl p-2 border border-purple-500/20 flex items-center justify-center">
+        <div class="w-full max-w-md bg-[#120d26] p-6 sm:p-8 rounded-2xl border-2 border-purple-500/30 text-center space-y-5 shadow-2xl">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-black/40 rounded-xl p-2 border border-purple-500/20 flex items-center justify-center">
                 <img src="{{ url_for('static', filename='bobon.webp') }}" alt="Bobon" class="max-h-full object-contain rounded">
             </div>
-            <h2 class="text-xl font-black text-white uppercase tracking-wider">LUCKY JET GATEWAY</h2>
+            <h2 class="text-lg sm:text-xl font-black text-white uppercase tracking-wider">LUCKY JET GATEWAY</h2>
             <p class="text-xs text-zinc-400">Entrez votre code d'accès pour lancer l'algorithme. CODE PROMO : GODWIN5</p>
             <input type="text" id="security-key-input" class="w-full input-box uppercase tracking-widest text-sm" placeholder="CODE D'ACCÈS">
             <button id="ad-trigger" disabled class="w-full py-3.5 bg-purple-600/20 border border-purple-500/40 rounded-xl text-xs text-purple-300 font-bold">
@@ -206,22 +209,22 @@
 
         <div class="relative z-20 flex justify-between items-start">
             <div>
-                <span class="text-[10px] text-purple-400 font-bold uppercase tracking-widest block mb-1">PROCHAINE COTE PRÉDITE</span>
+                <span class="text-[9px] sm:text-[10px] text-purple-400 font-bold uppercase tracking-widest block mb-1">PROCHAINE COTE PRÉDITE</span>
                 <div id="odds-display" class="multiplier-giant">1.00x</div>
             </div>
             <div class="text-right space-y-1">
                 <div>
-                    <span id="status-label" class="text-xs bg-purple-500/20 border border-purple-500/40 text-purple-300 px-3 py-1 rounded-full font-bold">STANDBY</span>
+                    <span id="status-label" class="text-[10px] sm:text-xs bg-purple-500/20 border border-purple-500/40 text-purple-300 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full font-bold">STANDBY</span>
                 </div>
                 <!-- Affichage du Code Promo -->
-                <div class="text-[11px] text-pink-400 font-bold tracking-wider bg-pink-500/10 border border-pink-500/30 px-2.5 py-0.5 rounded">
+                <div class="text-[10px] sm:text-[11px] text-pink-400 font-bold tracking-wider bg-pink-500/10 border border-pink-500/30 px-2.5 py-0.5 rounded">
                     PROMO: <span class="text-white">GODWIN5</span>
                 </div>
                 <!-- Heure en direct -->
-                <div class="text-xs text-purple-300 font-bold tracking-widest pt-0.5">
+                <div class="text-[11px] sm:text-xs text-purple-300 font-bold tracking-widest pt-0.5">
                     <i class="fa-regular fa-clock mr-1"></i> <span id="live-clock">--:--:--</span>
                 </div>
-                <div class="text-[10px] text-zinc-400">CONFIANCE: <span id="confidence-display" class="text-white font-bold">--%</span></div>
+                <div class="text-[9px] sm:text-[10px] text-zinc-400">CONFIANCE: <span id="confidence-display" class="text-white font-bold">--%</span></div>
             </div>
         </div>
 

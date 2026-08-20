@@ -21,11 +21,13 @@
                 radial-gradient(circle at 10% 90%, rgba(0, 255, 65, 0.05) 0%, transparent 40%);
             font-family: 'Fira Code', monospace;
             color: #fff;
-            min-height: 100vh;
+            min-height: 100dvh; /* Hauteur dynamique optimisée pour mobile */
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 12px;
+            margin: 0;
+            overflow-x: hidden;
         }
 
         .gateway-container {
@@ -36,15 +38,16 @@
             width: 100%;
             max-width: 420px;
             border-radius: 24px;
-            padding: 24px;
+            padding: 20px;
             position: relative;
+            box-sizing: border-box;
         }
 
         .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             font-size: 0.85rem;
         }
 
@@ -60,15 +63,15 @@
 
         .game-banner-box {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .game-logo-container {
-            width: 170px;
-            height: 210px;
+            width: 150px;
+            height: 190px;
             background: rgba(0, 0, 0, 0.6);
             border-radius: 16px;
-            margin: 0 auto 14px auto;
+            margin: 0 auto 12px auto;
             border: 1px solid rgba(255, 255, 255, 0.15);
             display: flex;
             align-items: center;
@@ -99,7 +102,7 @@
             cursor: pointer;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
             transition: all 0.3s ease;
-            margin-top: 10px;
+            margin-top: 6px;
         }
 
         .btn-hack:hover {
@@ -156,7 +159,7 @@
             <div class="game-logo-container">
                 <img src="{{ url_for('static', filename=game.image) }}" alt="{{ game.title }}" class="game-logo-img">
             </div>
-            <h1 class="text-xl font-black text-white mt-3">{{ game.title }}</h1>
+            <h1 class="text-xl font-black text-white mt-2">{{ game.title }}</h1>
             <p class="text-xs text-zinc-400 mt-0.5">{{ game.provider }}</p>
         </div>
 
