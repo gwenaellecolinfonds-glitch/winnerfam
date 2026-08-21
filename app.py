@@ -8,7 +8,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
-# Nouveaux codes de sécurité distincts pour chaque jeu
+# Codes de sécurité distincts pour chaque jeu
 CODES = {
     "crash": "CRASH-X99-VIP-26",
     "lucky": "LUCKY-JET-V26-PRO",
@@ -48,31 +48,42 @@ def mines_page(): return render_template('mines.html')
 @app.route('/aviator')
 def aviator_page(): return render_template('aviator.html')
 
-# --- API : Crash ---
+# --- API : Crash (Plafonné à 10.00x | Heure -1m 30s) ---
 @app.route('/api/predict-crash', methods=['POST'])
 def predict_crash():
     data = request.get_json() or {}
     if data.get('access_code') != CODES["crash"]: 
         return jsonify({"error": "Accès refusé"}), 403
+    
+    time.sleep(0.8)
+    multiplier = round(random.uniform(1.01, 10.00), 2)
+    # Décalage de 90 secondes (1 minute 30) en arrière
+    past_time = datetime.now(timezone.utc) - timedelta(seconds=90)
+    
     return jsonify({
-        "multiplier": f"{round(random.uniform(1.01, 20.00), 2)}x", 
+        "multiplier": f"{multiplier}x", 
         "confidence": "96%", 
-        "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S")
+        "timestamp": past_time.strftime("%H:%M:%S")
     })
 
-# --- API : Lucky Jet ---
+# --- API : Lucky Jet (Plafonné à 10.00x | Heure -1m 30s) ---
 @app.route('/api/predict-lucky', methods=['POST'])
 def predict_lucky():
     data = request.get_json() or {}
     if data.get('access_code') != CODES["lucky"]: 
         return jsonify({"error": "Accès refusé"}), 403
+
+    time.sleep(0.8)
+    predicted_odds = round(random.uniform(1.01, 10.00), 2)
+    past_time = datetime.now(timezone.utc) - timedelta(seconds=90)
+    
     return jsonify({
-        "predicted_odds": round(random.uniform(1.01, 20.00), 2), 
+        "predicted_odds": predicted_odds, 
         "confidence": "97%", 
-        "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S")
+        "timestamp": past_time.strftime("%H:%M:%S")
     })
 
-# --- API : Mines (1, 3, 5, 7 pièges) ---
+# --- API : Mines (1, 3, 5, 7 pièges | Heure -1m 30s) ---
 @app.route('/api/predict', methods=['POST'])
 def predict_mines():
     data = request.get_json() or {}
@@ -86,23 +97,30 @@ def predict_mines():
         mines = 3
 
     stars = {1: random.randint(5, 8), 3: random.randint(4, 6), 5: random.randint(3, 5), 7: random.randint(2, 4)}.get(mines, 4)
+    past_time = datetime.now(timezone.utc) - timedelta(seconds=90)
+    
     return jsonify({
         "status": "success",
         "predicted_stars": random.sample(range(25), min(stars, 25 - mines)), 
         "confidence": "98%", 
-        "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S")
+        "timestamp": past_time.strftime("%H:%M:%S")
     })
 
-# --- API : Aviator ---
+# --- API : Aviator (Plafonné à 10.00x | Heure -1m 30s) ---
 @app.route('/api/predict-aviator', methods=['POST'])
 def predict_aviator():
     data = request.get_json() or {}
     if data.get('access_code') != CODES["aviator"]: 
         return jsonify({"error": "Accès refusé"}), 403
+
+    time.sleep(0.8)
+    fly_multiplier = round(random.uniform(1.01, 10.00), 2)
+    past_time = datetime.now(timezone.utc) - timedelta(seconds=90)
+    
     return jsonify({
-        "multiplier": f"{round(random.uniform(1.01, 20.00), 2)}x", 
+        "multiplier": f"{fly_multiplier}x", 
         "confidence": "95%", 
-        "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S")
+        "timestamp": past_time.strftime("%H:%M:%S")
     })
 
 if __name__ == '__main__':

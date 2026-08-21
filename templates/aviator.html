@@ -8,173 +8,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { 
-            background: #050b14; 
-            font-family: 'Fira Code', monospace; 
-            color: #fff; 
-            overflow-x: hidden;
-            margin: 0;
-            min-height: 100dvh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-            box-sizing: border-box;
-        }
-
-        /* Fond Aviator avec rayons lumineux et dégradé sombre */
-        .aviator-bg {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 50%, #0c2038 0%, #050b14 80%);
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        /* Effet de rayons en arrière-plan */
-        .sunburst {
-            position: absolute;
-            inset: -50%;
-            background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.02) 0deg 10deg, transparent 10deg 20deg);
-            animation: rotateRays 60s linear infinite;
-            pointer-events: none;
-        }
+        body { background: #050b14; font-family: 'Fira Code', monospace; color: #fff; overflow-x: hidden; margin: 0; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 12px; box-sizing: border-box; }
+        .aviator-bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, #0c2038 0%, #050b14 80%); overflow: hidden; z-index: 1; }
+        .sunburst { position: absolute; inset: -50%; background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.02) 0deg 10deg, transparent 10deg 20deg); animation: rotateRays 60s linear infinite; pointer-events: none; }
         @keyframes rotateRays { 100% { transform: rotate(360deg); } }
-
-        .game-screen {
-            position: relative;
-            width: 100%;
-            max-width: 900px;
-            height: 480px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #0b192c 0%, #050b14 100%);
-            border: 2px solid rgba(239, 68, 68, 0.3);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(239, 68, 68, 0.15);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
-
-        /* Multiplicateur géant responsive (s'adapte à l'écran) */
-        .multiplier-giant {
-            font-size: clamp(3.5rem, 12vw, 6.5rem);
-            font-weight: 900;
-            color: #ffffff;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(239, 68, 68, 0.3);
-            line-height: 1;
-            letter-spacing: -2px;
-        }
-
-        /* Votre image "goua" animée adaptée en taille responsive */
-        .aviator-plane {
-            position: absolute;
-            left: 8%;
-            bottom: 15%;
-            width: clamp(90px, 20vw, 140px);
-            height: auto;
-            z-index: 5;
-            filter: drop-shadow(0 10px 20px rgba(239, 68, 68, 0.5));
-            transition: transform 0.05s linear;
-        }
-
-        @keyframes aviatorTakeOff {
-            0% { left: 8%; bottom: 15%; transform: scale(0.9) rotate(-10deg); }
-            40% { left: 35%; bottom: 35%; transform: scale(1.05) rotate(12deg); }
-            80% { left: 60%; bottom: 55%; transform: scale(1.1) rotate(18deg); }
-            100% { left: 72%; bottom: 62%; transform: scale(1.15) rotate(22deg); }
-        }
-        .taking-off {
-            animation: aviatorTakeOff 1.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
-        }
-
-        @keyframes flyAway {
-            0% { left: 72%; bottom: 62%; transform: scale(1.15) rotate(22deg); }
-            100% { left: 105%; bottom: 85%; transform: scale(1.25) rotate(30deg); opacity: 0; }
-        }
-        .flying-away {
-            animation: flyAway 1s ease-in forwards;
-        }
-
-        /* Courbe de vol rouge vif */
-        .flight-curve {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .control-panel {
-            background: rgba(11, 25, 44, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 14px;
-            padding: 14px;
-            z-index: 20;
-        }
-
-        .btn-predict {
-            background: linear-gradient(90deg, #ef4444, #dc2626);
-            color: #fff;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 14px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-            transition: all 0.3s;
-        }
-        .btn-predict:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
-        }
+        .game-screen { position: relative; width: 100%; max-width: 900px; height: 480px; border-radius: 20px; background: linear-gradient(135deg, #0b192c 0%, #050b14 100%); border: 2px solid rgba(239, 68, 68, 0.3); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(239, 68, 68, 0.15); z-index: 10; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; overflow: hidden; box-sizing: border-box; }
+        .multiplier-giant { font-size: clamp(3.5rem, 12vw, 6.5rem); font-weight: 900; color: #ffffff; text-shadow: 0 0 30px rgba(255, 255, 255, 0.4), 0 0 60px rgba(239, 68, 68, 0.3); line-height: 1; letter-spacing: -2px; }
+        .aviator-plane { position: absolute; left: 8%; bottom: 15%; width: clamp(90px, 20vw, 140px); height: auto; z-index: 5; filter: drop-shadow(0 10px 20px rgba(239, 68, 68, 0.5)); transition: transform 0.05s linear; }
+        @keyframes aviatorTakeOff { 0% { left: 8%; bottom: 15%; transform: scale(0.9) rotate(-10deg); } 40% { left: 35%; bottom: 35%; transform: scale(1.05) rotate(12deg); } 80% { left: 60%; bottom: 55%; transform: scale(1.1) rotate(18deg); } 100% { left: 72%; bottom: 62%; transform: scale(1.15) rotate(22deg); } }
+        .taking-off { animation: aviatorTakeOff 1.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards; }
+        @keyframes flyAway { 0% { left: 72%; bottom: 62%; transform: scale(1.15) rotate(22deg); } 100% { left: 105%; bottom: 85%; transform: scale(1.25) rotate(30deg); opacity: 0; } }
+        .flying-away { animation: flyAway 1s ease-in forwards; }
+        .flight-curve { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+        .control-panel { background: rgba(11, 25, 44, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; padding: 14px; z-index: 20; }
+        .btn-predict { background: linear-gradient(90deg, #ef4444, #dc2626); color: #fff; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); transition: all 0.3s; }
+        .btn-predict:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); }
         .btn-predict:disabled { opacity: 0.5; cursor: wait; }
-
-        #ad-layer {
-            position: fixed; inset: 0; background: #030712; z-index: 2000;
-            display: flex; align-items: center; justify-content: center; padding: 16px;
-        }
+        #ad-layer { position: fixed; inset: 0; background: #030712; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 16px; }
         .hidden-state { display: none !important; }
-
-        .input-box {
-            background: #0b192c;
-            border: 2px solid rgba(239, 68, 68, 0.4);
-            color: #fff;
-            text-align: center;
-            font-weight: 700;
-            outline: none;
-            border-radius: 10px;
-            padding: 12px;
-        }
-
-        .back-to-hub-btn {
-            position: fixed; top: 12px; left: 12px; z-index: 9999;
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 10px; background: rgba(11, 25, 44, 0.85);
-            border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px;
-            color: #f87171; font-family: 'Fira Code', monospace;
-            font-size: 0.7rem; font-weight: 700; text-decoration: none;
-            backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            transition: all 0.25s ease;
-        }
-        .back-to-hub-btn:hover {
-            background: rgba(239, 68, 68, 0.2); border-color: #ef4444;
-            color: #fff; transform: translateY(-2px);
-        }
+        .input-box { background: #0b192c; border: 2px solid rgba(239, 68, 68, 0.4); color: #fff; text-align: center; font-weight: 700; outline: none; border-radius: 10px; padding: 12px; }
+        .back-to-hub-btn { position: fixed; top: 12px; left: 12px; z-index: 9999; display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(11, 25, 44, 0.85); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; color: #f87171; font-family: 'Fira Code', monospace; font-size: 0.7rem; font-weight: 700; text-decoration: none; backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); transition: all 0.25s ease; }
+        .back-to-hub-btn:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fff; transform: translateY(-2px); }
     </style>
 </head>
 <body>
+    <a href="/hub" class="back-to-hub-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
 
-    <a href="/hub" class="back-to-hub-btn">
-        <i class="fa-solid fa-arrow-left"></i> Hub
-    </a>
-
-    <!-- Écran de Sécurité Initial (Gateway) -->
     <div id="ad-layer">
         <div class="w-full max-w-md bg-[#0b192c] p-6 sm:p-8 rounded-2xl border-2 border-red-500/30 text-center space-y-5 shadow-2xl">
             <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-black/40 rounded-xl p-2 border border-red-500/20 flex items-center justify-center">
@@ -183,58 +42,37 @@
             <h2 class="text-lg sm:text-xl font-black text-white uppercase tracking-wider">AVIATOR GATEWAY</h2>
             <p class="text-xs text-zinc-400">Entrez votre code d'accès pour lancer l'algorithme. CODE PROMO : GODWIN5</p>
             <input type="text" id="security-key-input" class="w-full input-box uppercase tracking-widest text-sm" placeholder="CODE D'ACCÈS">
-            <button id="ad-trigger" disabled class="w-full py-3.5 bg-red-600/20 border border-red-500/40 rounded-xl text-xs text-red-300 font-bold">
-                CHARGEMENT DU SYSTÈME (10s)
-            </button>
+            <button id="ad-trigger" disabled class="w-full py-3.5 bg-red-600/20 border border-red-500/40 rounded-xl text-xs text-red-300 font-bold">CHARGEMENT DU SYSTÈME (10s)</button>
         </div>
     </div>
 
-    <!-- Interface de jeu Aviator -->
     <div id="app-matrix" class="game-screen hidden-state">
         <div class="aviator-bg">
             <div class="sunburst"></div>
-            
-            <!-- Courbe de vol rouge vif -->
             <svg class="flight-curve" preserveAspectRatio="none" viewBox="0 0 100 100">
                 <path d="M0,95 Q45,90 100,35" fill="none" stroke="#ef4444" stroke-width="2.5" opacity="0.9"/>
             </svg>
         </div>
-
-        <!-- Image "goua" (goua.webp) qui s'envole en responsive -->
         <img id="aviator-plane" src="{{ url_for('static', filename='goua.webp') }}" alt="Goua Plane" class="aviator-plane">
-
         <div class="relative z-20 flex justify-between items-start">
             <div>
                 <span class="text-[9px] sm:text-[10px] text-red-400 font-bold uppercase tracking-widest block mb-1">PROCHAIN MULTIPLICATEUR</span>
                 <div id="odds-display" class="multiplier-giant">1.00x</div>
             </div>
             <div class="text-right space-y-1">
-                <div>
-                    <span id="status-label" class="text-[10px] sm:text-xs bg-red-500/20 border border-red-500/40 text-red-300 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full font-bold">STANDBY</span>
-                </div>
-                <!-- Code Promo Aviator -->
-                <div class="text-[10px] sm:text-[11px] text-red-400 font-bold tracking-wider bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded">
-                    PROMO: <span class="text-white">GODWIN5</span>
-                </div>
-                <!-- Heure en direct -->
-                <div class="text-[11px] sm:text-xs text-red-300 font-bold tracking-widest pt-0.5">
-                    <i class="fa-regular fa-clock mr-1"></i> <span id="live-clock">--:--:--</span>
-                </div>
-                <div class="text-[9px] sm:text-[10px] text-zinc-400">CONFIANCE: <span id="confidence-display" class="text-white font-bold">--%</span></div>
+                <div><span id="status-label" class="text-[10px] sm:text-xs bg-red-500/20 border border-red-500/40 text-red-300 px-2.5 py-0.5 rounded-full font-bold">STANDBY</span></div>
+                <div class="text-[10px] text-red-400 font-bold tracking-wider bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded">PROMO: <span class="text-white">GODWIN5</span></div>
+                <div class="text-[11px] text-red-300 font-bold tracking-widest pt-0.5"><i class="fa-regular fa-clock mr-1"></i> <span id="live-clock">--:--:--</span></div>
+                <div class="text-[9px] text-zinc-400">CONFIANCE: <span id="confidence-display" class="text-white font-bold">--%</span></div>
             </div>
         </div>
-
         <div class="control-panel">
-            <button id="action-btn" onclick="executeAviatorPrediction()" class="btn-predict w-full text-xs">
-                GÉNÉRER LE MULTIPLICATEUR AVIATOR
-            </button>
+            <button id="action-btn" onclick="executeAviatorPrediction()" class="btn-predict w-full text-xs">GÉNÉRER LE MULTIPLICATEUR AVIATOR</button>
         </div>
     </div>
 
     <script>
-        let validAccessCode = "";
-        let isCooldown = false;
-
+        let validAccessCode = "", isCooldown = false;
         window.onload = () => {
             let ticker = 10;
             const trigger = document.getElementById('ad-trigger');
@@ -248,10 +86,7 @@
                     trigger.className = "w-full py-3.5 bg-gradient-to-r from-red-600 to-rose-600 rounded-xl text-xs text-white font-bold cursor-pointer shadow-lg";
                     trigger.onclick = () => {
                         const code = document.getElementById('security-key-input').value.trim().toUpperCase();
-                        if (code !== "AVIA-SKY-26-VIP") {
-                            alert("Clé d'accès incorrecte ! (Code Aviator requis)");
-                            return;
-                        }
+                        if (code !== "AVIA-SKY-26-VIP") { alert("Clé d'accès incorrecte !"); return; }
                         validAccessCode = code;
                         document.getElementById('ad-layer').remove();
                         document.getElementById('app-matrix').classList.remove('hidden-state');
@@ -260,92 +95,48 @@
             }, 1000);
         };
 
-        // Mise à jour de l'horloge en direct
+        // Horloge décalée de -1 minute 30 secondes (-90000ms)
         setInterval(() => {
-            const now = new Date();
-            document.getElementById('live-clock').innerText = now.toLocaleTimeString('fr-FR');
+            const pastDate = new Date(new Date().getTime() - 90000);
+            document.getElementById('live-clock').innerText = pastDate.toLocaleTimeString('fr-FR');
         }, 1000);
 
         async function executeAviatorPrediction() {
             if (isCooldown) return;
-
-            const btn = document.getElementById('action-btn');
-            const status = document.getElementById('status-label');
-            const plane = document.getElementById('aviator-plane');
-
-            isCooldown = true;
-            btn.disabled = true;
-            status.innerText = "DÉCOLLAGE...";
-
+            const btn = document.getElementById('action-btn'), status = document.getElementById('status-label'), plane = document.getElementById('aviator-plane');
+            isCooldown = true; btn.disabled = true; status.innerText = "DÉCOLLAGE...";
             plane.className = "aviator-plane taking-off";
-
             try {
-                const req = await fetch('/api/predict-aviator', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        access_code: validAccessCode
-                    })
-                });
-
+                const req = await fetch('/api/predict-aviator', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ access_code: validAccessCode }) });
                 if (!req.ok) throw new Error("Accès refusé");
-
                 const res = await req.json();
-
                 setTimeout(() => {
                     animateMultiplier(res.multiplier);
                     document.getElementById('confidence-display').innerText = res.confidence;
                     status.innerText = "EN VOL";
-                    
-                    setTimeout(() => {
-                        plane.className = "aviator-plane flying-away";
-                    }, 1500);
-
+                    setTimeout(() => { plane.className = "aviator-plane flying-away"; }, 1500);
                     startCountdownLockout(20);
                 }, 800);
-
             } catch (e) {
-                alert("Erreur de connexion aux serveurs Aviator.");
-                isCooldown = false;
-                btn.disabled = false;
-                btn.innerText = "GÉNÉRER LE MULTIPLICATEUR AVIATOR";
-                status.innerText = "ERREUR";
-                plane.className = "aviator-plane";
+                alert("Erreur de connexion."); isCooldown = false; btn.disabled = false; btn.innerText = "GÉNÉRER LE MULTIPLICATEUR AVIATOR"; status.innerText = "ERREUR"; plane.className = "aviator-plane";
             }
         }
 
         function animateMultiplier(finalVal) {
-            let start = 1.00;
-            const target = parseFloat(finalVal);
-            const step = Math.max((target - 1.0) / 25, 0.01);
+            let start = 1.00; const target = parseFloat(finalVal); const step = Math.max((target - 1.0) / 25, 0.01);
             const run = setInterval(() => {
                 start += step;
-                if(start >= target) {
-                    start = target;
-                    clearInterval(run);
-                }
+                if(start >= target) { start = target; clearInterval(run); }
                 document.getElementById('odds-display').innerText = start.toFixed(2) + 'x';
             }, 35);
         }
 
         function startCountdownLockout(duration) {
-            const btn = document.getElementById('action-btn');
-            let timer = duration;
-
+            const btn = document.getElementById('action-btn'); let timer = duration;
             const interval = setInterval(() => {
                 timer--;
                 btn.innerText = `PROCHAIN SIGNAL DANS (${timer}s)`;
-                
-                if (timer <= 0) {
-                    clearInterval(interval);
-                    isCooldown = false;
-                    btn.disabled = false;
-                    btn.innerText = "GÉNÉRER LE MULTIPLICATEUR AVIATOR";
-                    document.getElementById('status-label').innerText = "PRÊT";
-                    
-                    const plane = document.getElementById('aviator-plane');
-                    plane.className = "aviator-plane";
-                }
+                if (timer <= 0) { clearInterval(interval); isCooldown = false; btn.disabled = false; btn.innerText = "GÉNÉRER LE MULTIPLICATEUR AVIATOR"; document.getElementById('status-label').innerText = "PRÊT"; document.getElementById('aviator-plane').className = "aviator-plane"; }
             }, 1000);
         }
     </script>

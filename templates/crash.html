@@ -8,164 +8,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body {
-            background: #080c14;
-            font-family: 'Fira Code', monospace;
-            color: #fff;
-            overflow-x: hidden;
-            margin: 0;
-            min-height: 100dvh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-            box-sizing: border-box;
-        }
-
-        .crash-bg {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 30%, #0d1b32 0%, #080c14 80%);
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .game-screen {
-            position: relative;
-            width: 100%;
-            max-width: 900px;
-            height: 480px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #0f1c30 0%, #080c14 100%);
-            border: 2px solid rgba(0, 255, 255, 0.25);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 255, 255, 0.15);
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
-
-        .multiplier-giant {
-            font-size: clamp(3.5rem, 12vw, 6.5rem);
-            font-weight: 900;
-            color: #ffffff;
-            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.3);
-            line-height: 1;
-            letter-spacing: -2px;
-        }
-
-        .curve-svg {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .target-node {
-            position: absolute;
-            width: 26px;
-            height: 26px;
-            transform: translate(50%, 50%);
-            z-index: 5;
-            opacity: 0;
-            transition: bottom 0.8s cubic-bezier(0.1, 0.9, 0.2, 1), right 0.8s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.3s ease;
-        }
+        body { background: #080c14; font-family: 'Fira Code', monospace; color: #fff; overflow-x: hidden; margin: 0; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 12px; box-sizing: border-box; }
+        .crash-bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, #0d1b32 0%, #080c14 80%); overflow: hidden; z-index: 1; }
+        .game-screen { position: relative; width: 100%; max-width: 900px; height: 480px; border-radius: 20px; background: linear-gradient(135deg, #0f1c30 0%, #080c14 100%); border: 2px solid rgba(0, 255, 255, 0.25); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 255, 255, 0.15); z-index: 10; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; overflow: hidden; box-sizing: border-box; }
+        .multiplier-giant { font-size: clamp(3.5rem, 12vw, 6.5rem); font-weight: 900; color: #ffffff; text-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.3); line-height: 1; letter-spacing: -2px; }
+        .curve-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+        .target-node { position: absolute; width: 26px; height: 26px; transform: translate(50%, 50%); z-index: 5; opacity: 0; transition: bottom 0.8s cubic-bezier(0.1, 0.9, 0.2, 1), right 0.8s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.3s ease; }
         .target-node.active { opacity: 1; }
-
-        .pulse-ring {
-            position: absolute;
-            inset: -8px;
-            border: 2px solid #00ffff;
-            border-radius: 50%;
-            animation: pulseTarget 1.5s infinite;
-        }
-        @keyframes pulseTarget {
-            0% { transform: scale(0.8); opacity: 1; }
-            100% { transform: scale(1.6); opacity: 0; }
-        }
-
-        .core-dot {
-            position: absolute;
-            inset: 6px;
-            background: #00ffff;
-            border-radius: 50%;
-            box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
-        }
-
-        .control-panel {
-            background: rgba(8, 12, 20, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            border-radius: 14px;
-            padding: 14px;
-            z-index: 20;
-        }
-
-        .btn-predict {
-            background: linear-gradient(90deg, #00ffff, #0088ff);
-            color: #080c14;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 14px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            transition: all 0.3s;
-        }
-        .btn-predict:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
-        }
+        .pulse-ring { position: absolute; inset: -8px; border: 2px solid #00ffff; border-radius: 50%; animation: pulseTarget 1.5s infinite; }
+        @keyframes pulseTarget { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+        .core-dot { position: absolute; inset: 6px; background: #00ffff; border-radius: 50%; box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff; }
+        .control-panel { background: rgba(8, 12, 20, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(0, 255, 255, 0.3); border-radius: 14px; padding: 14px; z-index: 20; }
+        .btn-predict { background: linear-gradient(90deg, #00ffff, #0088ff); color: #080c14; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); transition: all 0.3s; }
+        .btn-predict:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 255, 255, 0.8); }
         .btn-predict:disabled { opacity: 0.5; cursor: wait; }
-
-        #ad-layer {
-            position: fixed; inset: 0; background: #05080f; z-index: 2000;
-            display: flex; align-items: center; justify-content: center; padding: 16px;
-        }
+        #ad-layer { position: fixed; inset: 0; background: #05080f; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 16px; }
         .hidden-state { display: none !important; }
-
-        .input-box {
-            background: #080c14;
-            border: 2px solid rgba(0, 255, 255, 0.4);
-            color: #fff;
-            text-align: center;
-            font-weight: 700;
-            outline: none;
-            border-radius: 10px;
-            padding: 12px;
-        }
-        .input-box:focus { border-color: #00ffff; box-shadow: 0 0 15px rgba(0, 255, 255, 0.4); }
-
-        .back-to-hub-btn {
-            position: fixed; top: 12px; left: 12px; z-index: 9999;
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 10px; background: rgba(8, 12, 20, 0.85);
-            border: 1px solid rgba(0, 255, 255, 0.4); border-radius: 10px;
-            color: #00ffff; font-family: 'Fira Code', monospace;
-            font-size: 0.7rem; font-weight: 700; text-decoration: none;
-            backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            transition: all 0.25s ease;
-        }
-        .back-to-hub-btn:hover {
-            background: rgba(0, 255, 255, 0.2); border-color: #00ffff;
-            color: #fff; transform: translateY(-2px);
-        }
+        .input-box { background: #080c14; border: 2px solid rgba(0, 255, 255, 0.4); color: #fff; text-align: center; font-weight: 700; outline: none; border-radius: 10px; padding: 12px; }
+        .back-to-hub-btn { position: fixed; top: 12px; left: 12px; z-index: 9999; display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(8, 12, 20, 0.85); border: 1px solid rgba(0, 255, 255, 0.4); border-radius: 10px; color: #00ffff; font-family: 'Fira Code', monospace; font-size: 0.7rem; font-weight: 700; text-decoration: none; backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); transition: all 0.25s ease; }
+        .back-to-hub-btn:hover { background: rgba(0, 255, 255, 0.2); border-color: #00ffff; color: #fff; transform: translateY(-2px); }
     </style>
 </head>
 <body>
+    <a href="/hub" class="back-to-hub-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
 
-    <a href="/hub" class="back-to-hub-btn">
-        <i class="fa-solid fa-arrow-left"></i> Hub
-    </a>
-
-    <!-- Écran de Sécurité Initial -->
     <div id="ad-layer">
         <div class="w-full max-w-md bg-[#080c14] p-6 sm:p-8 rounded-2xl border-2 border-cyan-500/30 text-center space-y-5 shadow-2xl">
             <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-black/40 rounded-xl p-2 border border-cyan-500/20 flex items-center justify-center">
@@ -174,63 +40,38 @@
             <h2 class="text-lg sm:text-xl font-black text-white uppercase tracking-wider">CRASH GATEWAY</h2>
             <p class="text-xs text-zinc-400">Entrez votre code d'accès pour lancer l'algorithme. CODE PROMO : GODWIN5</p>
             <input type="text" id="security-key-input" class="w-full input-box uppercase tracking-widest text-sm" placeholder="CODE D'ACCÈS">
-            <button id="ad-trigger" disabled class="w-full py-3.5 bg-cyan-600/20 border border-cyan-500/40 rounded-xl text-xs text-cyan-300 font-bold">
-                CHARGEMENT DU SYSTÈME (10s)
-            </button>
+            <button id="ad-trigger" disabled class="w-full py-3.5 bg-cyan-600/20 border border-cyan-500/40 rounded-xl text-xs text-cyan-300 font-bold">CHARGEMENT DU SYSTÈME (10s)</button>
         </div>
     </div>
 
-    <!-- Interface de jeu Crash 1win -->
     <div id="app-matrix" class="game-screen hidden-state">
         <div class="crash-bg">
             <svg class="curve-svg" preserveAspectRatio="none" viewBox="0 0 100 100">
                 <path d="M0,85 Q40,75 75,45 T100,25 L100,100 L0,100 Z" fill="url(#cyanGrad)" opacity="0.2"/>
                 <path d="M0,85 Q40,75 75,45 T100,25" fill="none" stroke="#00ffff" stroke-width="2" stroke-linecap="round"/>
-                <defs>
-                    <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#00ffff"/>
-                        <stop offset="100%" stop-color="transparent"/>
-                    </linearGradient>
-                </defs>
+                <defs><linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00ffff"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
             </svg>
         </div>
-
-        <!-- Le point lumineux bleu dynamique -->
-        <div id="target-node" class="target-node">
-            <div class="pulse-ring"></div>
-            <div class="core-dot"></div>
-        </div>
-
+        <div id="target-node" class="target-node"><div class="pulse-ring"></div><div class="core-dot"></div></div>
         <div class="relative z-20 flex justify-between items-start">
             <div>
                 <span class="text-[9px] sm:text-[10px] text-cyan-400 font-bold uppercase tracking-widest block mb-1">MULTIPLICATEUR PRÉDIT</span>
                 <div id="odds-display" class="multiplier-giant">1.00x</div>
             </div>
             <div class="text-right space-y-1">
-                <div>
-                    <span id="status-label" class="text-[10px] sm:text-xs bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full font-bold">STANDBY</span>
-                </div>
-                <div class="text-[10px] sm:text-[11px] text-cyan-400 font-bold tracking-wider bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-0.5 rounded">
-                    PROMO: <span class="text-white">GODWIN5</span>
-                </div>
-                <div class="text-[11px] sm:text-xs text-cyan-300 font-bold tracking-widest pt-0.5">
-                    <i class="fa-regular fa-clock mr-1"></i> <span id="live-clock">--:--:--</span>
-                </div>
-                <div class="text-[9px] sm:text-[10px] text-zinc-400">CONFIANCE: <span id="confidence-display" class="text-white font-bold">--%</span></div>
+                <div><span id="status-label" class="text-[10px] sm:text-xs bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 px-2.5 py-0.5 rounded-full font-bold">STANDBY</span></div>
+                <div class="text-[10px] text-cyan-400 font-bold tracking-wider bg-cyan-500/10 border border-cyan-500/30 px-2.5 py-0.5 rounded">PROMO: <span class="text-white">GODWIN5</span></div>
+                <div class="text-[11px] text-cyan-300 font-bold tracking-widest pt-0.5"><i class="fa-regular fa-clock mr-1"></i> <span id="live-clock">--:--:--</span></div>
+                <div class="text-[9px] text-zinc-400">CONFIANCE: <span id="confidence-display" class="text-white font-bold">--%</span></div>
             </div>
         </div>
-
         <div class="control-panel">
-            <button id="action-btn" onclick="executeCrashPrediction()" class="btn-predict w-full text-xs">
-                ANALYSER LE PROCHAIN ROUND
-            </button>
+            <button id="action-btn" onclick="executeCrashPrediction()" class="btn-predict w-full text-xs">ANALYSER LE PROCHAIN ROUND</button>
         </div>
     </div>
 
     <script>
-        let validAccessCode = "";
-        let isCooldown = false;
-
+        let validAccessCode = "", isCooldown = false;
         window.onload = () => {
             let ticker = 10;
             const trigger = document.getElementById('ad-trigger');
@@ -244,10 +85,7 @@
                     trigger.className = "w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-xs text-black font-black cursor-pointer shadow-lg";
                     trigger.onclick = () => {
                         const code = document.getElementById('security-key-input').value.trim().toUpperCase();
-                        if (code !== "CRASH-X99-VIP-26") {
-                            alert("Clé d'accès incorrecte !");
-                            return;
-                        }
+                        if (code !== "CRASH-X99-VIP-26") { alert("Clé d'accès incorrecte !"); return; }
                         validAccessCode = code;
                         document.getElementById('ad-layer').remove();
                         document.getElementById('app-matrix').classList.remove('hidden-state');
@@ -256,101 +94,56 @@
             }, 1000);
         };
 
+        // Horloge décalée de -1 minute 30 secondes (-90000ms)
         setInterval(() => {
-            const now = new Date();
-            document.getElementById('live-clock').innerText = now.toLocaleTimeString('fr-FR');
+            const pastDate = new Date(new Date().getTime() - 90000);
+            document.getElementById('live-clock').innerText = pastDate.toLocaleTimeString('fr-FR');
         }, 1000);
 
         async function executeCrashPrediction() {
             if (isCooldown) return;
-
-            const btn = document.getElementById('action-btn');
-            const status = document.getElementById('status-label');
-            const targetNode = document.getElementById('target-node');
-
-            isCooldown = true;
-            btn.disabled = true;
-            status.innerText = "ANALYSE...";
-            targetNode.classList.remove('active');
-
+            const btn = document.getElementById('action-btn'), status = document.getElementById('status-label'), targetNode = document.getElementById('target-node');
+            isCooldown = true; btn.disabled = true; status.innerText = "ANALYSE..."; targetNode.classList.remove('active');
             try {
-                const req = await fetch('/api/predict-crash', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        access_code: validAccessCode
-                    })
-                });
-
+                const req = await fetch('/api/predict-crash', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ access_code: validAccessCode }) });
                 if (!req.ok) throw new Error("Accès refusé");
-
                 const res = await req.json();
-
                 setTimeout(() => {
                     animateMultiplier(res.multiplier);
                     document.getElementById('confidence-display').innerText = res.confidence;
                     status.innerText = "STABLE";
-                   
                     updateTargetPosition(parseFloat(res.multiplier));
-
                     startCountdownLockout(20);
                 }, 800);
-
             } catch (e) {
-                alert("Erreur de connexion aux serveurs Crash.");
-                isCooldown = false;
-                btn.disabled = false;
-                btn.innerText = "ANALYSER LE PROCHAIN ROUND";
-                status.innerText = "ERREUR";
-                targetNode.classList.remove('active');
+                alert("Erreur de connexion."); isCooldown = false; btn.disabled = false; btn.innerText = "ANALYSER LE PROCHAIN ROUND"; status.innerText = "ERREUR"; targetNode.classList.remove('active');
             }
         }
 
         function updateTargetPosition(multiplier) {
             const targetNode = document.getElementById('target-node');
-           
-            let percent = (multiplier - 1.0) / (20.0 - 1.0);
+            let percent = (multiplier - 1.0) / (10.0 - 1.0);
             percent = Math.max(0, Math.min(1, percent));
-
-            // Utilisation de pourcentages pour s'adapter à toutes les tailles d'écrans mobiles
-            const calculatedBottom = 15 + (percent * 55); 
-            const calculatedRight = 75 - (percent * 60);  
-
-            targetNode.style.bottom = calculatedBottom + '%';
-            targetNode.style.right = calculatedRight + '%';
-           
+            targetNode.style.bottom = (15 + (percent * 55)) + '%';
+            targetNode.style.right = (75 - (percent * 60)) + '%';
             targetNode.classList.add('active');
         }
 
         function animateMultiplier(finalVal) {
-            let start = 1.00;
-            const target = parseFloat(finalVal);
-            const step = Math.max((target - 1.0) / 25, 0.01);
+            let start = 1.00; const target = parseFloat(finalVal); const step = Math.max((target - 1.0) / 25, 0.01);
             const run = setInterval(() => {
                 start += step;
-                if(start >= target) {
-                    start = target;
-                    clearInterval(run);
-                }
+                if(start >= target) { start = target; clearInterval(run); }
                 document.getElementById('odds-display').innerText = start.toFixed(2) + 'x';
             }, 35);
         }
 
         function startCountdownLockout(duration) {
-            const btn = document.getElementById('action-btn');
-            let timer = duration;
-
+            const btn = document.getElementById('action-btn'); let timer = duration;
             const interval = setInterval(() => {
                 timer--;
                 btn.innerText = `PROCHAIN SCAN DANS (${timer}s)`;
-               
-                if (timer <= 0) {
-                    clearInterval(interval);
-                    isCooldown = false;
-                    btn.disabled = false;
-                    btn.innerText = "ANALYSER LE PROCHAIN ROUND";
-                    document.getElementById('status-label').innerText = "PRÊT";
-                }
+                if (timer <= 0) { clearInterval(interval); isCooldown = false; btn.disabled = false; btn.innerText = "ANALYSER LE PROCHAIN ROUND"; document.getElementById('status-label').innerText = "PRÊT"; }
             }, 1000);
         }
     </script>
