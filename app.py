@@ -3,7 +3,8 @@ import random
 import time
 import json
 import requests
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from flask import Flask, render_template, jsonify, request
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -14,7 +15,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 TELEGRAM_BOT_TOKEN = "8378796687:AAF-hCn6Tt8oh7VsMliQdGG-69HJRTF3sRk"
 TELEGRAM_CHAT_ID = "7782921218"
 
-# Fichier pour sauvegarder durablement les ID acceptés (pour qu'ils ne s'effacent pas au redémarrage)
+# Fichier pour sauvegarder durablement les ID acceptés
 DB_FILE = "approved_users.json"
 
 def load_database():
@@ -109,11 +110,9 @@ def submit_player_id():
     if not player_id or len(player_id) < 4:
         return jsonify({"status": "error", "message": "ID 1win invalide"}), 400
     
-    # Vérifie si l'ID est déjà approuvé définitivement
     if PLAYER_STATUS.get(player_id) == "approved":
         return jsonify({"status": "approved", "message": "Accès autorisé"})
     
-    # Si l'ID n'est pas encore approuvé et qu'il n'est pas déjà en attente
     if player_id not in PLAYER_STATUS or PLAYER_STATUS[player_id] == "rejected":
         PLAYER_STATUS[player_id] = "pending"
         save_database(PLAYER_STATUS)
@@ -134,7 +133,7 @@ def check_status():
     status = PLAYER_STATUS.get(player_id, "pending")
     return jsonify({"status": status})
 
-# ⚡ WEBHOOK TELEGRAM : Gère l'acceptation définitive d'un ID unique
+# ⚡ WEBHOOK TELEGRAM
 @app.route('/telegram-webhook', methods=['POST'])
 def telegram_webhook():
     data = request.get_json() or {}
@@ -148,7 +147,7 @@ def telegram_webhook():
         if callback_data.startswith("approve_"):
             player_id = callback_data.replace("approve_", "")
             PLAYER_STATUS[player_id] = "approved"
-            save_database(PLAYER_STATUS)  # Sauvegarde permanente
+            save_database(PLAYER_STATUS)
             new_text = f"✅ *ID UNIQUE {player_id} ACCEPTÉ ✅*\nCet utilisateur a maintenant un accès permanent aux jeux."
         elif callback_data.startswith("reject_"):
             player_id = callback_data.replace("reject_", "")
@@ -171,10 +170,10 @@ def telegram_webhook():
         
     return jsonify({"status": "ok"})
 
-# --- FONCTION UTILITAIRE : Heure cible du round (+35 secondes) ---
+# --- FONCTION UTILITAIRE : Heure locale Côte d'Ivoire (+35 secondes) ---
 def get_target_play_time():
-    target = datetime.now(timezone.utc) + timedelta(seconds=35)
-    return target.strftime("%H:%M:%S")
+    abidjan_time = datetime.now(ZoneInfo("Africa/Abidjan")) + timedelta(seconds=35)
+    return abidjan_time.strftime("%H:%M:%S")
 
 # --- API : Jeux ---
 @app.route('/api/predict-crash', methods=['POST'])
