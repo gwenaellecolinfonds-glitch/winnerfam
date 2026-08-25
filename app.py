@@ -1,6 +1,7 @@
 import os
 import random
 import time
+import json
 import requests
 from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template, jsonify, request
@@ -13,8 +14,27 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 TELEGRAM_BOT_TOKEN = "8378796687:AAF-hCn6Tt8oh7VsMliQdGG-69HJRTF3sRk"
 TELEGRAM_CHAT_ID = "7782921218"
 
-# Base de données temporaire pour stocker les statuts des joueurs ("pending", "approved", "rejected")
-PLAYER_STATUS = {} 
+# Fichier pour sauvegarder durablement les ID acceptés (pour qu'ils ne s'effacent pas au redémarrage)
+DB_FILE = "approved_users.json"
+
+def load_database():
+    if os.path.exists(DB_FILE):
+        try:
+            with open(DB_FILE, "r") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+def save_database(data):
+    try:
+        with open(DB_FILE, "w") as f:
+            json.dump(data, f)
+    except Exception as e:
+        print("Erreur sauvegarde DB:", e)
+
+# Base de données chargée en mémoire
+PLAYER_STATUS = load_database()
 
 def send_telegram_approval_request(player_id, game_name):
     if not TELEGRAM_BOT_TOKEN:
@@ -22,7 +42,6 @@ def send_telegram_approval_request(player_id, game_name):
     
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     
-    # Boutons interactifs sous le message Telegram
     inline_keyboard = {
         "inline_keyboard": [
             [
@@ -36,7 +55,7 @@ def send_telegram_approval_request(player_id, game_name):
         "chat_id": TELEGRAM_CHAT_ID,
         "text": (
             f"⏳ *NOUVELLE DEMANDE D'ACCÈS VIP* ⏳\n\n"
-            f"🆔 *ID 1win :* `{player_id}`\n"
+            f"🆔 *ID 1win unique :* `{player_id}`\n"
             f"🎮 *Jeu ciblé :* {game_name}\n"
             f"🎟️ *Code requis :* `GODWIN5`\n\n"
             f"👇 *Choisissez une action :*"
@@ -79,7 +98,7 @@ def mines_page(): return render_template('mines.html')
 @app.route('/aviator')
 def aviator_page(): return render_template('aviator.html')
 
-# --- GESTION DES ACCÈS VIP ---
+# --- GESTION DES ACCÈS VIP (ID UNIQUE) ---
 
 @app.route('/api/submit-player-id', methods=['POST'])
 def submit_player_id():
@@ -90,9 +109,14 @@ def submit_player_id():
     if not player_id or len(player_id) < 4:
         return jsonify({"status": "error", "message": "ID 1win invalide"}), 400
     
-    # Enregistrement ou réinitialisation si le joueur refait une demande
+    # Vérifie si l'ID est déjà approuvé définitivement
+    if PLAYER_STATUS.get(player_id) == "approved":
+        return jsonify({"status": "approved", "message": "Accès autorisé"})
+    
+    # Si l'ID n'est pas encore approuvé et qu'il n'est pas déjà en attente
     if player_id not in PLAYER_STATUS or PLAYER_STATUS[player_id] == "rejected":
         PLAYER_STATUS[player_id] = "pending"
+        save_database(PLAYER_STATUS)
         send_telegram_approval_request(player_id, game_name)
     
     status = PLAYER_STATUS[player_id]
@@ -110,7 +134,7 @@ def check_status():
     status = PLAYER_STATUS.get(player_id, "pending")
     return jsonify({"status": status})
 
-# ⚡ WEBHOOK TELEGRAM : Gère les clics sur "Accepter" ou "Refuser"
+# ⚡ WEBHOOK TELEGRAM : Gère l'acceptation définitive d'un ID unique
 @app.route('/telegram-webhook', methods=['POST'])
 def telegram_webhook():
     data = request.get_json() or {}
@@ -124,15 +148,16 @@ def telegram_webhook():
         if callback_data.startswith("approve_"):
             player_id = callback_data.replace("approve_", "")
             PLAYER_STATUS[player_id] = "approved"
-            new_text = f"✅ *ID {player_id} ACCEPTÉ ✅*\nL'utilisateur a désormais accès aux jeux."
+            save_database(PLAYER_STATUS)  # Sauvegarde permanente
+            new_text = f"✅ *ID UNIQUE {player_id} ACCEPTÉ ✅*\nCet utilisateur a maintenant un accès permanent aux jeux."
         elif callback_data.startswith("reject_"):
             player_id = callback_data.replace("reject_", "")
             PLAYER_STATUS[player_id] = "rejected"
-            new_text = f"❌ *ID {player_id} REFUSÉ ❌*\nL'accès a été bloqué."
+            save_database(PLAYER_STATUS)
+            new_text = f"❌ *ID UNIQUE {player_id} REFUSÉ ❌*\nL'accès a été bloqué."
         else:
             return jsonify({"status": "ok"})
         
-        # Modifier le message Telegram pour retirer les boutons
         edit_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText"
         requests.post(edit_url, json={
             "chat_id": chat_id,
@@ -141,9 +166,8 @@ def telegram_webhook():
             "parse_mode": "Markdown"
         })
         
-        # Répondre à Telegram pour stopper l'animation de chargement du bouton
         answer_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/answerCallbackQuery"
-        requests.post(answer_url, json={"callback_query_id": callback["id"], "text": "Action prise en compte !"})
+        requests.post(answer_url, json={"callback_query_id": callback["id"], "text": "Enregistré avec succès !"})
         
     return jsonify({"status": "ok"})
 
@@ -152,7 +176,7 @@ def get_target_play_time():
     target = datetime.now(timezone.utc) + timedelta(seconds=35)
     return target.strftime("%H:%M:%S")
 
-# --- API : Jeux (Plafonnés à 10.00x + Heure du round) ---
+# --- API : Jeux ---
 @app.route('/api/predict-crash', methods=['POST'])
 def predict_crash():
     time.sleep(0.8)
