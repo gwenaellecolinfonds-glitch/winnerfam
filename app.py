@@ -12,8 +12,8 @@ app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 # --- CONFIGURATION TELEGRAM ---
-TELEGRAM_BOT_TOKEN = "8378796687:AAF-hCn6Tt8oh7VsMliQdGG-69HJRTF3sRk"
-TELEGRAM_CHAT_ID = "7782921218"
+TELEGRAM_BOT_TOKEN = "8869435787:AAGc6NSHg2oZ1ve64EU5GegmofC3Da6xg1M"
+TELEGRAM_CHAT_ID = "7874177570"
 
 # Fichier pour sauvegarder durablement les ID acceptés
 DB_FILE = "approved_users.json"
