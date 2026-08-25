@@ -36,14 +36,26 @@
     <a href="/hub" class="back-to-hub-btn"><i class="fa-solid fa-arrow-left"></i> Hub</a>
 
     <div id="ad-layer">
-        <div class="w-full max-w-md bg-[#120d26] p-6 sm:p-8 rounded-2xl border-2 border-purple-500/30 text-center space-y-5 shadow-2xl">
-            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-black/40 rounded-xl p-2 border border-purple-500/20 flex items-center justify-center">
-                <img src="{{ url_for('static', filename='bobon.webp') }}" alt="Bobon" class="max-h-full object-contain rounded">
+        <div class="w-full max-w-md bg-[#120d26] p-6 sm:p-8 rounded-2xl border-2 border-purple-500/30 text-center space-y-4 shadow-2xl">
+            <h2 class="text-base sm:text-lg font-black text-white uppercase tracking-wider">VALIDATION VIP LUCKY JET</h2>
+            <p class="text-[11px] text-zinc-300 leading-relaxed">
+                Inscrivez-vous avec le code promo : <br>
+                <strong class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/30">GODWIN5</strong>
+            </p>
+            <a href="https://one-vv0011.com/?open=register&p=9v9g" target="_blank" class="block w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-black text-xs rounded-xl uppercase transition shadow-lg">
+                1. S'inscrire sur 1win
+            </a>
+            <div id="input-section" class="border-t border-zinc-800 pt-3">
+                <p class="text-[10px] text-zinc-400 mb-2">2. Entrez votre ID 1win :</p>
+                <input type="text" id="player-id-input" class="w-full input-box uppercase tracking-widest text-sm mb-3" placeholder="EX: 12345678">
+                <button onclick="requestAccess('lucky')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-xs rounded-xl uppercase tracking-wider transition shadow-lg cursor-pointer">
+                    Demander l'accès VIP
+                </button>
             </div>
-            <h2 class="text-lg sm:text-xl font-black text-white uppercase tracking-wider">LUCKY JET GATEWAY</h2>
-            <p class="text-xs text-zinc-400">Entrez votre code d'accès pour lancer l'algorithme. CODE PROMO : GODWIN5</p>
-            <input type="text" id="security-key-input" class="w-full input-box uppercase tracking-widest text-sm" placeholder="CODE D'ACCÈS">
-            <button id="ad-trigger" disabled class="w-full py-3.5 bg-purple-600/20 border border-purple-500/40 rounded-xl text-xs text-purple-300 font-bold">CHARGEMENT DU SYSTÈME (10s)</button>
+            <div id="waiting-section" class="hidden text-center space-y-3 pt-3 border-t border-zinc-800">
+                <div class="inline-block w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-xs text-purple-300 font-bold">En attente de validation sur votre Telegram...</p>
+            </div>
         </div>
     </div>
 
@@ -76,34 +88,46 @@
     </div>
 
     <script>
-        let validAccessCode = "", isCooldown = false;
-        window.onload = () => {
-            let ticker = 10;
-            const trigger = document.getElementById('ad-trigger');
-            const countdown = setInterval(() => {
-                ticker--;
-                trigger.innerText = `CHARGEMENT DU SYSTÈME (${ticker}s)`;
-                if(ticker <= 0) {
-                    clearInterval(countdown);
-                    trigger.disabled = false;
-                    trigger.innerText = "ACCÉDER AU PRÉDICTEUR";
-                    trigger.className = "w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-xs text-white font-bold cursor-pointer shadow-lg";
-                    trigger.onclick = () => {
-                        const code = document.getElementById('security-key-input').value.trim().toUpperCase();
-                        if (code !== "LUCKY-JET-V26-PRO") { alert("Clé d'accès incorrecte !"); return; }
-                        validAccessCode = code;
-                        document.getElementById('ad-layer').remove();
-                        document.getElementById('app-matrix').classList.remove('hidden-state');
-                    }
-                }
-            }, 1000);
-        };
+        let checkingInterval = null, savedPlayerId = "", isCooldown = false;
 
-        // Horloge décalée de -1 minute 30 secondes (-90000ms)
+        // Horloge normale en direct
         setInterval(() => {
-            const pastDate = new Date(new Date().getTime() - 90000);
-            document.getElementById('live-clock').innerText = pastDate.toLocaleTimeString('fr-FR');
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleTimeString('fr-FR');
         }, 1000);
+
+        async function requestAccess(gameName) {
+            const playerId = document.getElementById('player-id-input').value.trim();
+            if (!playerId) { alert("Veuillez entrer votre ID 1win !"); return; }
+            savedPlayerId = playerId;
+            try {
+                const response = await fetch('/api/submit-player-id', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ player_id: playerId, game: gameName })
+                });
+                if (response.ok) {
+                    document.getElementById('input-section').style.display = 'none';
+                    document.getElementById('waiting-section').classList.remove('hidden');
+                    checkingInterval = setInterval(checkAdminApproval, 4000);
+                } else { alert("Erreur d'envoi."); }
+            } catch (e) { alert("Erreur réseau."); }
+        }
+
+        async function checkAdminApproval() {
+            if (!savedPlayerId) return;
+            try {
+                const response = await fetch('/api/check-status', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ player_id: savedPlayerId })
+                });
+                const result = await response.json();
+                if (result.status === "approved") {
+                    clearInterval(checkingInterval);
+                    document.getElementById('ad-layer').remove();
+                    document.getElementById('app-matrix').classList.remove('hidden-state');
+                }
+            } catch (e) {}
+        }
 
         async function executePrediction() {
             if (isCooldown) return;
@@ -111,18 +135,18 @@
             isCooldown = true; btn.disabled = true; status.innerText = "DÉCOLLAGE...";
             character.className = "lucky-character taking-off";
             try {
-                const req = await fetch('/api/predict-lucky', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ access_code: validAccessCode }) });
-                if (!req.ok) throw new Error("Accès refusé");
+                const req = await fetch('/api/predict-lucky', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({}) });
+                if (!req.ok) throw new Error("Erreur");
                 const res = await req.json();
                 setTimeout(() => {
                     animateMultiplier(res.predicted_odds);
                     document.getElementById('confidence-display').innerText = res.confidence;
-                    status.innerText = "VOL STABLE";
+                    status.innerText = `JOUER À : ${res.target_time}`;
                     setTimeout(() => { character.className = "lucky-character flying-away"; }, 1500);
                     startCountdownLockout(20);
                 }, 800);
             } catch (e) {
-                alert("Erreur de connexion."); isCooldown = false; btn.disabled = false; btn.innerText = "GÉNÉRER LA COTE LUCKY JET"; status.innerText = "ERREUR"; character.className = "lucky-character";
+                isCooldown = false; btn.disabled = false; btn.innerText = "GÉNÉRER LA COTE LUCKY JET"; status.innerText = "ERREUR"; character.className = "lucky-character";
             }
         }
 
