@@ -90,11 +90,9 @@
     <script>
         let checkingInterval = null, savedPlayerId = "", isCooldown = false;
 
-        // Horloge en direct heure locale Côte d'Ivoire
         setInterval(() => {
             const options = { timeZone: 'Africa/Abidjan', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            const localTimeStr = new Intl.DateTimeFormat('fr-FR', options).format(new Date());
-            document.getElementById('live-clock').innerText = localTimeStr;
+            document.getElementById('live-clock').innerText = new Intl.DateTimeFormat('fr-FR', options).format(new Date());
         }, 1000);
 
         async function requestAccess(gameName) {
@@ -152,7 +150,7 @@
                     document.getElementById('confidence-display').innerText = res.confidence;
                     status.innerText = `JOUER À : ${res.target_time}`;
                     setTimeout(() => { character.className = "lucky-character flying-away"; }, 1500);
-                    startCountdownLockout(20);
+                    startCountdownLockout(60);
                 }, 800);
             } catch (e) {
                 isCooldown = false; btn.disabled = false; btn.innerText = "GÉNÉRER LA COTE LUCKY JET"; status.innerText = "ERREUR"; character.className = "lucky-character";

@@ -170,9 +170,10 @@ def telegram_webhook():
         
     return jsonify({"status": "ok"})
 
-# --- FONCTION UTILITAIRE : Heure locale Côte d'Ivoire (+35 secondes) ---
+# --- FONCTION UTILITAIRE : Heure locale Côte d'Ivoire (Aléatoire entre 1 min [60s] et 1 min 50 [110s]) ---
 def get_target_play_time():
-    abidjan_time = datetime.now(ZoneInfo("Africa/Abidjan")) + timedelta(seconds=35)
+    random_seconds = random.randint(60, 110)
+    abidjan_time = datetime.now(ZoneInfo("Africa/Abidjan")) + timedelta(seconds=random_seconds)
     return abidjan_time.strftime("%H:%M:%S")
 
 # --- API : Jeux ---
@@ -200,8 +201,7 @@ def predict_mines():
     return jsonify({
         "status": "success",
         "predicted_stars": random.sample(range(25), min(stars, 25 - mines)), 
-        "confidence": "98%", 
-        "target_time": get_target_play_time()
+        "confidence": "98%"
     })
 
 @app.route('/api/predict-aviator', methods=['POST'])

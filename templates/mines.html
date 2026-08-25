@@ -60,7 +60,6 @@
         <div class="relative z-20 flex justify-between items-center border-b border-cyan-500/20 pb-2.5 mb-2">
             <div>
                 <h1 id="status-label" class="text-[11px] sm:text-xs font-black text-cyan-400 uppercase tracking-widest">MINES VIP PREDICTOR</h1>
-                <div class="text-[9px] sm:text-[10px] text-cyan-300 font-bold mt-0.5"><i class="fa-regular fa-clock mr-1"></i><span id="live-clock">--:--:--</span></div>
             </div>
             <div class="text-right">
                 <div class="text-[9px] sm:text-[10px] text-cyan-400 font-bold tracking-wider bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded inline-block mb-1">PROMO: <span class="text-white">GODWIN5</span></div>
@@ -89,13 +88,6 @@
         let currentPredictedStars = [], currentStarStep = 0, gameState = "IDLE";
 
         window.onload = () => { buildGrid(); }
-
-        // Horloge en direct heure locale Côte d'Ivoire
-        setInterval(() => {
-            const options = { timeZone: 'Africa/Abidjan', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            const localTimeStr = new Intl.DateTimeFormat('fr-FR', options).format(new Date());
-            document.getElementById('live-clock').innerText = localTimeStr;
-        }, 1000);
 
         async function requestAccess(gameName) {
             const playerId = document.getElementById('player-id-input').value.trim();
@@ -184,7 +176,7 @@
                 setTimeout(() => {
                     currentPredictedStars = res.predicted_stars;
                     document.getElementById('confidence-display').innerText = res.confidence;
-                    document.getElementById('status-label').innerText = `JOUER À : ${res.target_time}`;
+                    document.getElementById('status-label').innerText = "MATRICE ANALYSÉE";
                     gameState = "STEP_WAITING_BUTTON"; btn.disabled = false; btn.innerText = "AFFICHER LA PROCHAINE ÉTOILE";
                 }, 800);
             } catch (e) {
