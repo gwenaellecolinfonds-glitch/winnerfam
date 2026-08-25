@@ -10,19 +10,19 @@ app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 # --- CONFIGURATION TELEGRAM ---
-TELEGRAM_BOT_TOKEN = "8378796687:AAF-hCn6Tt8oh7VsMliQdGG-69HJRTF3sRk"  # Votre token BotFather
-TELEGRAM_CHAT_ID = "7782921218"             # Votre ID Telegram personnel
+TELEGRAM_BOT_TOKEN = "8378796687:AAF-hCn6Tt8oh7VsMliQdGG-69HJRTF3sRk"
+TELEGRAM_CHAT_ID = "7782921218"
 
-# Base de données temporaire des statuts ("pending", "approved", "rejected")
+# Base de données temporaire pour stocker les statuts des joueurs ("pending", "approved", "rejected")
 PLAYER_STATUS = {} 
 
 def send_telegram_approval_request(player_id, game_name):
-    if TELEGRAM_BOT_TOKEN == "":
+    if not TELEGRAM_BOT_TOKEN:
         return
     
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     
-    # Création des boutons interactifs sous le message Telegram
+    # Boutons interactifs sous le message Telegram
     inline_keyboard = {
         "inline_keyboard": [
             [
@@ -108,10 +108,9 @@ def check_status():
     data = request.get_json() or {}
     player_id = data.get('player_id', '').strip()
     status = PLAYER_STATUS.get(player_id, "pending")
-    
     return jsonify({"status": status})
 
-# ⚡ WEBHOOK TELEGRAM : Récupère les clics sur les boutons Accepter / Refuser
+# ⚡ WEBHOOK TELEGRAM : Gère les clics sur "Accepter" ou "Refuser"
 @app.route('/telegram-webhook', methods=['POST'])
 def telegram_webhook():
     data = request.get_json() or {}
@@ -122,7 +121,6 @@ def telegram_webhook():
         chat_id = callback["message"]["chat"]["id"]
         message_id = callback["message"]["message_id"]
         
-        # Traitement du bouton cliqué
         if callback_data.startswith("approve_"):
             player_id = callback_data.replace("approve_", "")
             PLAYER_STATUS[player_id] = "approved"
@@ -134,7 +132,7 @@ def telegram_webhook():
         else:
             return jsonify({"status": "ok"})
         
-        # Modifier le message sur Telegram pour enlever les boutons et afficher la décision
+        # Modifier le message Telegram pour retirer les boutons
         edit_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/editMessageText"
         requests.post(edit_url, json={
             "chat_id": chat_id,
@@ -143,9 +141,9 @@ def telegram_webhook():
             "parse_mode": "Markdown"
         })
         
-        # Confirmer à Telegram que le clic a bien été pris en compte
+        # Répondre à Telegram pour stopper l'animation de chargement du bouton
         answer_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/answerCallbackQuery"
-        requests.post(answer_url, json={"callback_query_id": callback["id"], "text": "Action effectuée avec succès !"})
+        requests.post(answer_url, json={"callback_query_id": callback["id"], "text": "Action prise en compte !"})
         
     return jsonify({"status": "ok"})
 
@@ -154,7 +152,7 @@ def get_target_play_time():
     target = datetime.now(timezone.utc) + timedelta(seconds=35)
     return target.strftime("%H:%M:%S")
 
-# --- API : Jeux ---
+# --- API : Jeux (Plafonnés à 10.00x + Heure du round) ---
 @app.route('/api/predict-crash', methods=['POST'])
 def predict_crash():
     time.sleep(0.8)
@@ -176,7 +174,12 @@ def predict_mines():
     except ValueError:
         mines = 3
     stars = {1: random.randint(5, 8), 3: random.randint(4, 6), 5: random.randint(3, 5), 7: random.randint(2, 4)}.get(mines, 4)
-    return jsonify({"status": "success", "predicted_stars": random.sample(range(25), min(stars, 25 - mines)), "confidence": "98%", "target_time": get_target_play_time()})
+    return jsonify({
+        "status": "success",
+        "predicted_stars": random.sample(range(25), min(stars, 25 - mines)), 
+        "confidence": "98%", 
+        "target_time": get_target_play_time()
+    })
 
 @app.route('/api/predict-aviator', methods=['POST'])
 def predict_aviator():
